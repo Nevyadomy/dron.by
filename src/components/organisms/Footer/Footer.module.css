@@ -1,0 +1,93 @@
+.footer {
+  background: var(--color-footer-bg);
+  color: var(--color-footer-fg);
+  margin-top: 48px;
+}
+.inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 40px 24px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+}
+@media (max-width: 1024px) {
+  .inner { grid-template-columns: repeat(2, 1fr); gap: 28px; padding: 32px 20px; }
+}
+@media (max-width: 480px) {
+  .inner { grid-template-columns: 1fr; gap: 24px; padding: 24px 16px; }
+}
+.heading {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-footer-heading);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.text {
+  font-size: 12px;
+  line-height: 1.6;
+  opacity: 0.8;
+  margin-bottom: 16px;
+}
+.subscribe {
+  display: flex;
+}
+.subscribe input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius) 0 0 var(--radius);
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--color-footer-fg);
+  outline: none;
+}
+.subscribe input::placeholder { color: rgba(255, 255, 255, 0.4); }
+.subscribe button {
+  background: var(--color-primary);
+  color: var(--color-primary-fg);
+  border: none;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  cursor: pointer;
+}
+@media (hover: hover) { .subscribe button:hover { background: var(--color-accent); } }
+@media (hover: none)  { .subscribe button:active { background: var(--color-accent); } }
+.links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.links a {
+  font-size: 12px;
+  opacity: 0.8;
+}
+@media (hover: hover) { .links a:hover { opacity: 1; } }
+@media (hover: none)  { .links a:active { opacity: 1; } }
+.docLink {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+@media (hover: hover) { .docLink:hover { text-decoration: underline; } }
+.docPlaceholder {
+  font-size: 12px;
+  opacity: 0.55;
+  cursor: default;
+}
+.bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  opacity: 0.6;
+  flex-wrap: wrap;
+  gap: 12px;
+}

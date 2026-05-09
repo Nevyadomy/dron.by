@@ -1,0 +1,14 @@
+.smart {
+  background-color: var(--color-muted);
+  background-image: url("../../../assets/images/common/img-placeholder-light.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 40% auto;
+}
+:global([data-theme="dark"]) .smart {
+  background-image: url("../../../assets/images/common/img-placeholder-dark.png");
+}
+.smart[data-loaded] {
+  background-image: none;
+  background-color: transparent;
+}

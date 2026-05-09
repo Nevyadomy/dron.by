@@ -1,0 +1,17 @@
+.crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--color-muted-fg);
+  margin: 4px 0 16px;
+}
+.link {
+  color: var(--color-muted-fg);
+  transition: color 0.2s;
+}
+@media (hover: hover) { .link:hover { color: var(--color-primary); } }
+@media (hover: none) { .link:active { color: var(--color-primary); } }
+.sep { opacity: 0.6; }
+.current { color: var(--color-fg); font-weight: 500; }

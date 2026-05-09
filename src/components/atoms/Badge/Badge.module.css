@@ -1,0 +1,22 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary);
+  color: var(--color-primary-fg);
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 999px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  line-height: 1;
+}
+.success { background: var(--color-success); }
+.destructive { background: var(--color-destructive); }
+.muted { background: var(--color-muted); color: var(--color-muted-fg); }
+.floating {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+}

@@ -1,0 +1,17 @@
+.label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--color-muted-fg);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+@media (hover: hover) { .label:hover { color: var(--color-fg); } }
+@media (hover: none) { .label:active { color: var(--color-fg); } }
+.input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
