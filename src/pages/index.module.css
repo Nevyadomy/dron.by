@@ -81,6 +81,9 @@
 @media (hover: none) and (max-width: 1024px) {
   .heroArrow, .heroDots { display: none; }
 }
+@media (max-width: 480px) {
+  .hreoArrow, .heroArrowLeft, .heroArrowRight { display: none; }
+}
 
 /* Dots */
 .heroDots {
