@@ -48,7 +48,7 @@ const ContactsPage = () => (
               style={{ flexShrink: 0 }}
             />
             <a href="tel:+375290000000" style={{ color: "var(--color-fg)" }}>
-              +375 (22) 788-10-55
+              +375 (25) 788-10-55
             </a>
             <span style={{ color: "var(--color-muted-fg)" }}>
               · отдел продаж
