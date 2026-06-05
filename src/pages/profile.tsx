@@ -229,8 +229,8 @@ const ProfileForm = () => {
   const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (!f) return;
-    if (f.size > 2 * 1024 * 1024) {
-      alert("Файл слишком большой. Максимум 2 МБ.");
+    if (f.size > 10 * 1024 * 1024) {
+      alert("Файл слишком большой. Максимум 10 МБ.");
       return;
     }
     const reader = new FileReader();
