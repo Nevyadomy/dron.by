@@ -8,6 +8,7 @@ import { SmartImage } from "@/components/atoms/SmartImage";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/useAuth";
 import { useAuthPrompt } from "@/contexts/AuthPromptContext";
+import { useCurrency } from "@/hooks/useCurrency";
 import dronePlaceholder from "@/assets/images/common/drone-placeholder.png";
 import { getProductPromo, applyDiscount } from "@/data/promotions";
 import { productsWord } from "@/utils/pluralize";
@@ -21,6 +22,7 @@ const CartPage = () => {
     useCart();
   const { user, isAuthenticated } = useAuth();
   const { prompt } = useAuthPrompt();
+  const { format } = useCurrency();
 
   const [consent, setConsent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -94,15 +96,14 @@ const CartPage = () => {
     }, 0);
     const orderItems = items
       .map(
-        (i) =>
-          `• ${i.title} × ${i.quantity} = ${(i.price * i.quantity).toFixed(2)} BYN`,
+        (i) => `• ${i.title} × ${i.quantity} = ${format(i.price * i.quantity)}`,
       )
       .join("\n");
     const message =
       `Заказ в DRON.BY\n\n` +
       `Здравствуйте, ${user.name || user.email}!\n\n` +
       `Ваш заказ оформлен:\n${orderItems}\n\n` +
-      `Итого: ${orderTotal.toFixed(2)} BYN\n\n` +
+      `Итого: ${format(orderTotal)}\n\n` +
       `Спасибо за покупку!`;
 
     try {
@@ -220,8 +221,7 @@ const CartPage = () => {
                 </span>
               </button>
               <strong className={styles.price}>
-                {(item.price * item.quantity).toFixed(2)}
-                <i className="nbrb-icon">BYN</i>
+                {format(item.price * item.quantity)}
               </strong>
               <button
                 type="button"
@@ -246,21 +246,15 @@ const CartPage = () => {
                   productsWord(totalCount).slice(1)}
                 , {totalCount} шт.
               </span>
-              <strong>
-                {totalPrice.toFixed(2)} <i className="nbrb-icon">BYN</i>
-              </strong>
+              <strong>{format(totalPrice)}</strong>
             </div>
             <div className={styles.sumRow}>
               <span>Сумма скидки</span>
-              <strong>
-                {discount.toFixed(2)} <i className="nbrb-icon">BYN</i>
-              </strong>
+              <strong>{format(discount)}</strong>
             </div>
             <div className={`${styles.sumRow} ${styles.total}`}>
               <span>Итого</span>
-              <strong>
-                {total.toFixed(2)} <i className="nbrb-icon">BYN</i>
-              </strong>
+              <strong>{format(total)}</strong>
             </div>
 
             <Button
@@ -275,6 +269,7 @@ const CartPage = () => {
             <label className={styles.consent}>
               <input
                 type="checkbox"
+                className="checkbox"
                 checked={consent}
                 onChange={(e) => setConsent(e.target.checked)}
               />

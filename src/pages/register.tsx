@@ -8,6 +8,7 @@ import { FormField } from "@/components/molecules/FormField";
 import { useAuth } from "@/contexts/useAuth";
 import { registrationSchema } from "@/schemas/registration.schema";
 import { registerUser } from "@/services/userStorage";
+import { OAuthRow } from "@/components/atoms/OAuthButtons";
 
 const FORMSPREE_ID = "xaqvnkzz";
 const FORMSPREE_URL = `https://formspree.io/f/${FORMSPREE_ID}`;
@@ -179,9 +180,10 @@ const RegisterPage = () => {
             >
               <input
                 type="checkbox"
+                className="Checkbox"
                 checked={form.consent}
                 onChange={(e) => update("consent", e.target.checked)}
-                style={{ marginTop: 2 }}
+                style={{ marginTop: 0 }}
               />
               <span>
                 Я согласен(на) с{" "}
@@ -222,6 +224,8 @@ const RegisterPage = () => {
             </Button>
           </form>
         )}
+
+        {!done && <OAuthRow />}
 
         <p
           style={{

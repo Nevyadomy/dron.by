@@ -8,6 +8,7 @@ import { FormField } from "@/components/molecules/FormField";
 import { useAuth } from "@/contexts/useAuth";
 import { loginSchema } from "@/schemas/login.schema";
 import { verifyUser } from "@/services/userStorage";
+import { OAuthRow } from "@/components/atoms/OAuthButtons";
 
 const LoginPage = () => {
   const { login } = useAuth();
@@ -98,6 +99,7 @@ const LoginPage = () => {
             Зарегистрироваться
           </Link>
         </p>
+        <OAuthRow />
       </LayoutCard>
     </div>
   );

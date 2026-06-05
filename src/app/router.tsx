@@ -8,6 +8,7 @@ import CartPage from "@/pages/cart";
 import FavoritesPage from "@/pages/favorites";
 import LoginPage from "@/pages/login";
 import RegisterPage from "@/pages/register";
+import ProfilePage from "@/pages/profile";
 import PromotionsPage from "@/pages/promotions";
 import NewsPage from "@/pages/news";
 import ContactsPage from "@/pages/contacts";
@@ -29,6 +30,7 @@ export const AppRouter = () => (
       <Route path="/docs/:slug" element={<DocsPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route path="/profile" element={<ProfilePage />} />
       <Route path="*" element={<NotFound />} />
     </Route>
   </Routes>

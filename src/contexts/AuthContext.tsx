@@ -4,6 +4,7 @@ import { AuthContext, type AuthState, type AuthUser } from "./auth-context";
 type AuthAction =
   | { type: "LOGIN"; payload: AuthUser }
   | { type: "LOGOUT" }
+  | { type: "UPDATE"; payload: Partial<AuthUser> }
   | { type: "HYDRATE"; payload: AuthUser | null };
 
 const STORAGE_KEY = "auth_user";
@@ -17,6 +18,9 @@ function reducer(state: AuthState, action: AuthAction): AuthState {
       if (action.payload)
         return { user: action.payload, isAuthenticated: true };
       return state;
+    case "UPDATE":
+      if (!state.user) return state;
+      return { ...state, user: { ...state.user, ...action.payload } };
     case "LOGOUT":
       return initialState;
     default:
@@ -55,8 +59,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     dispatch({ type: "LOGOUT" });
   };
 
+  const updateUser = (patch: Partial<AuthUser>) => {
+    if (!state.user) return;
+    const next = { ...state.user, ...patch };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    dispatch({ type: "UPDATE", payload: patch });
+  };
+
   return (
-    <AuthContext.Provider value={{ ...state, isHydrated, login, logout }}>
+    <AuthContext.Provider
+      value={{ ...state, isHydrated, login, logout, updateUser }}
+    >
       {children}
     </AuthContext.Provider>
   );

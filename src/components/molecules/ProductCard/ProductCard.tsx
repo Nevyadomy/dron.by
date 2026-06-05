@@ -2,8 +2,9 @@ import { Heart, ShoppingCart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { LayoutCard } from "@/components/atoms/LayoutCard";
 import { SmartImage } from "@/components/atoms/SmartImage";
-import { RatingStars } from "@/components/atoms/RatingStars";
+import { RatingValue } from "@/components/atoms/RatingValue";
 import { useCart } from "@/contexts/CartContext";
+import { useCurrency } from "@/hooks/useCurrency";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import type { Product } from "@/schemas/product.schema";
 import dronePlaceholder from "@/assets/images/common/drone-placeholder.png";
@@ -18,6 +19,7 @@ export interface ProductCardProps {
 export const ProductCard = ({ product }: ProductCardProps) => {
   const { isFavorite, toggle } = useFavorites();
   const { state, add, remove } = useCart();
+  const { format } = useCurrency();
   const navigate = useNavigate();
   const inCart = state.items.some((i) => i.id === product.id);
   const fav = isFavorite(product.id);
@@ -54,9 +56,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         <p className={styles.name}>
           <Link to={`/product/${product.id}`}>{product.title}</Link>
         </p>
-        {product.rating > 0 && (
-          <RatingStars value={product.rating} size={13} showValue />
-        )}
+        {product.rating > 0 && <RatingValue value={product.rating} size={14} />}
         <p
           className={cn(
             styles.price,
@@ -66,11 +66,11 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           <span className={styles.priceWrap}>
             {promo && promo.discount > 0 && (
               <span className={styles.oldPrice}>
-                {product.price} <i className="nbrb-icon">BYN</i>
+                <span className={styles.oldPrice}>{format(product.price)}</span>
               </span>
             )}
             <span>
-              {finalPrice} <i className="nbrb-icon">BYN</i> <span>/ шт</span>
+              {format(finalPrice)} <span>/ шт</span>
             </span>
           </span>
         </p>

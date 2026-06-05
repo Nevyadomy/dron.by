@@ -1,19 +1,21 @@
 .imageArea {
   position: relative;
   background: var(--color-muted);
-  padding: 12px;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   height: 160px;
   width: 100%;
+  overflow: hidden;
 }
-@media (max-width: 768px) { .imageArea { height: 140px; padding: 10px; } }
+@media (max-width: 768px) { .imageArea { height: 140px; padding: 0; } }
 @media (max-width: 580px) { .imageArea { height: 150px; } }
 .imageArea img {
-  max-height: 100%;
-  max-width: 100%;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 .favBtn {
   background: none;

@@ -1,0 +1,77 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #1a1a1a;
+  border-radius: var(--radius);
+  background: #ffffff;
+  color: #1a1a1a;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+  line-height: 1;
+}
+:global([data-theme="dark"]) .btn {
+  background: #e8ecef;
+  color: #111;
+  border-color: #111;
+}
+@media (hover: hover) {
+  .btn:hover:not(:disabled) { background: #f0f2f5; }
+}
+@media (hover: none) {
+  .btn:active:not(:disabled) { background: #f0f2f5; }
+}
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+@media (max-width: 480px) {
+  .row { grid-template-columns: 1fr; }
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--color-muted-fg);
+  font-size: 12px;
+  margin: 16px 0 4px;
+}
+.divider::before, .divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.icon { display: inline-flex; }
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modal {
+  background: var(--color-card);
+  color: var(--color-fg);
+  border-radius: var(--radius);
+  padding: 24px;
+  max-width: 360px;
+  width: 100%;
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}

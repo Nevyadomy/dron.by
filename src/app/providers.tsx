@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { AuthPromptProvider } from "@/contexts/AuthPromptContext";
+import { CurrencyProvider } from "@/contexts/CurrencyContext";
 
 export const Providers = ({ children }: { children: ReactNode }) => {
   const [client] = useState(
@@ -26,11 +27,13 @@ export const Providers = ({ children }: { children: ReactNode }) => {
     <QueryClientProvider client={client}>
       <BrowserRouter>
         <AuthProvider>
-          <FavoritesProvider>
-            <CartProvider>
-              <AuthPromptProvider>{children}</AuthPromptProvider>
-            </CartProvider>
-          </FavoritesProvider>
+          <CurrencyProvider>
+            <FavoritesProvider>
+              <CartProvider>
+                <AuthPromptProvider>{children}</AuthPromptProvider>
+              </CartProvider>
+            </FavoritesProvider>
+          </CurrencyProvider>
         </AuthProvider>
       </BrowserRouter>
       {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}

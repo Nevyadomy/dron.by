@@ -244,13 +244,10 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
             <Search size={20} />
           </button>
           <Link
-            to={isAuthenticated ? "/" : "/login"}
+            to={isAuthenticated ? "/profile" : "/login"}
             className={styles.iconBtn}
             aria-label={isAuthenticated ? "Профиль" : "Войти"}
             title={isAuthenticated ? "Профиль" : "Войти"}
-            onClick={(e) => {
-              if (isAuthenticated) e.preventDefault();
-            }}
           >
             <User size={20} />
           </Link>
@@ -293,9 +290,13 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
 
           {isAuthenticated ? (
             <>
-              <span className={styles.userName}>
+              <Link
+                to="/profile"
+                className={styles.userName}
+                title="Личный кабинет"
+              >
                 {user?.name || user?.email}
-              </span>
+              </Link>
               <button
                 type="button"
                 className={styles.iconBtn}

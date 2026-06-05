@@ -1,0 +1,15 @@
+.wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  line-height: 1;
+  color: var(--color-fg);
+}
+.star {
+  color: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+}
+.value { font-weight: 600; }
+.count { color: var(--color-muted-fg); font-weight: 400; }

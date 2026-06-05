@@ -2,7 +2,6 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { FilterCheckbox } from "@/components/molecules/FilterCheckbox";
-import { RatingStars } from "@/components/atoms/RatingStars";
 import styles from "./FilterSidebar.module.css";
 
 export interface PriceRange {
@@ -118,30 +117,15 @@ export const FilterSidebar = ({
     </Section>
 
     <Section title="Рейтинг">
-      {[4, 3, 2, 1].map((r) => (
-        <label
+      {[4, 3, 2].map((r) => (
+        <FilterCheckbox
           key={r}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            padding: "6px 0",
-            cursor: "pointer",
-            fontSize: 14,
-          }}
-        >
-          <input
-            type="radio"
-            name="rating"
-            checked={selectedRating === r}
-            onChange={() => onRatingChange(selectedRating === r ? null : r)}
-            onClick={() => {
-              if (selectedRating === r) onRatingChange(null);
-            }}
-          />
-          <RatingStars value={r} size={14} />
-          <span style={{ color: "var(--color-muted-fg)" }}>и выше</span>
-        </label>
+          name="rating"
+          type="radio"
+          label={`От ${r} и выше`}
+          checked={selectedRating === r}
+          onChange={() => onRatingChange(selectedRating === r ? null : r)}
+        />
       ))}
     </Section>
 

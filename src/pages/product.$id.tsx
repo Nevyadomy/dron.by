@@ -4,8 +4,9 @@ import { Link, useParams } from "react-router-dom";
 import { Button } from "@/components/atoms/Button";
 import { LayoutCard } from "@/components/atoms/LayoutCard";
 import { SmartImage } from "@/components/atoms/SmartImage";
-import { RatingStars } from "@/components/atoms/RatingStars";
+import { RatingValue } from "@/components/atoms/RatingValue";
 import { useCart } from "@/contexts/CartContext";
+import { useCurrency } from "@/hooks/useCurrency";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { fetchProduct } from "@/services/productService";
 import dronePlaceholder from "@/assets/images/common/drone-placeholder.png";
@@ -21,6 +22,7 @@ const ProductPage = () => {
 
   const { isFavorite, toggle } = useFavorites();
   const { state, add, remove } = useCart();
+  const { format } = useCurrency();
 
   if (isLoading)
     return (
@@ -90,9 +92,7 @@ const ProductPage = () => {
           <p style={{ color: "var(--color-muted-fg)" }}>
             {data.brand} · {data.category}
           </p>
-          {data.rating > 0 && (
-            <RatingStars value={data.rating} size={16} showValue />
-          )}
+          {data.rating > 0 && <RatingValue value={data.rating} size={16} />}
           <div
             style={{
               display: "flex",
@@ -108,7 +108,7 @@ const ProductPage = () => {
                 color: "var(--color-primary)",
               }}
             >
-              {finalPrice} <i className="nbrb-icon">BYN</i>
+              {format(finalPrice)}
             </p>
             {hasDiscount && (
               <p
@@ -118,7 +118,7 @@ const ProductPage = () => {
                   textDecoration: "line-through",
                 }}
               >
-                {data.price} <i className="nbrb-icon">BYN</i>
+                {format(data.price)}
               </p>
             )}
             {promo && (

@@ -21,7 +21,7 @@ export const FilterCheckbox = ({
       name={name}
       checked={checked}
       onChange={onChange}
-      className={styles.input}
+      className={type === "radio" ? "checkbox-radio" : "checkbox"}
     />
     {label}
   </label>

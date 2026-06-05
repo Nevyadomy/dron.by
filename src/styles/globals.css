@@ -132,3 +132,55 @@ select::-ms-expand {
 @media (max-width: 768px) {
   .promoRow { grid-template-columns: 1fr; gap: 16px; }
 }
+
+/* ===== Custom checkbox (apply class "checkbox" to <input type="checkbox|radio">) ===== */
+input.checkbox,
+input.checkbox-radio {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-card);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+input.checkbox { border-radius: 4px; }
+input.checkbox-radio { border-radius: 50%; }
+input.checkbox:checked,
+input.checkbox-radio:checked {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+input.checkbox:checked::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='3,8.5 7,12 13,4'/></svg>");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+input.checkbox-radio:checked::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-primary-fg);
+}
+input.checkbox:focus-visible,
+input.checkbox-radio:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+input.checkbox:disabled,
+input.checkbox-radio:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
