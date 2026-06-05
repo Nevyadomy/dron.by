@@ -2,6 +2,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { FilterCheckbox } from "@/components/molecules/FilterCheckbox";
+import { RatingStars } from "@/components/atoms/RatingStars";
 import styles from "./FilterSidebar.module.css";
 
 export interface PriceRange {
@@ -18,10 +19,12 @@ export interface FilterSidebarProps {
   selectedBrands: string[];
   selectedPriceRange: number | null;
   inStockOnly: boolean;
+  selectedRating: number | null;
   onCategoryToggle: (c: string) => void;
   onBrandToggle: (b: string) => void;
   onPriceRangeChange: (idx: number | null) => void;
   onInStockChange: (v: boolean) => void;
+  onRatingChange: (r: number | null) => void;
   onReset: () => void;
 }
 
@@ -58,10 +61,12 @@ export const FilterSidebar = ({
   selectedBrands,
   selectedPriceRange,
   inStockOnly,
+  selectedRating,
   onCategoryToggle,
   onBrandToggle,
   onPriceRangeChange,
   onInStockChange,
+  onRatingChange,
   onReset,
 }: FilterSidebarProps) => (
   <aside className={styles.sidebar}>
@@ -110,6 +115,34 @@ export const FilterSidebar = ({
         checked={inStockOnly}
         onChange={() => onInStockChange(!inStockOnly)}
       />
+    </Section>
+
+    <Section title="Рейтинг">
+      {[4, 3, 2, 1].map((r) => (
+        <label
+          key={r}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            padding: "6px 0",
+            cursor: "pointer",
+            fontSize: 14,
+          }}
+        >
+          <input
+            type="radio"
+            name="rating"
+            checked={selectedRating === r}
+            onChange={() => onRatingChange(selectedRating === r ? null : r)}
+            onClick={() => {
+              if (selectedRating === r) onRatingChange(null);
+            }}
+          />
+          <RatingStars value={r} size={14} />
+          <span style={{ color: "var(--color-muted-fg)" }}>и выше</span>
+        </label>
+      ))}
     </Section>
 
     <button type="button" className={styles.resetBtn} onClick={onReset}>

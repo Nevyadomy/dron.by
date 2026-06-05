@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import MainLayout from "@/components/templates/MainLayout";
 import IndexPage from "@/pages/index";
 import CatalogPage from "@/pages/catalog";
+import SearchPage from "@/pages/search";
 import ProductPage from "@/pages/product.$id";
 import CartPage from "@/pages/cart";
 import FavoritesPage from "@/pages/favorites";
@@ -18,6 +19,7 @@ export const AppRouter = () => (
     <Route element={<MainLayout />}>
       <Route path="/" element={<IndexPage />} />
       <Route path="/catalog" element={<CatalogPage />} />
+      <Route path="/search" element={<SearchPage />} />
       <Route path="/product/:id" element={<ProductPage />} />
       <Route path="/cart" element={<CartPage />} />
       <Route path="/favorites" element={<FavoritesPage />} />

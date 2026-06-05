@@ -4,10 +4,9 @@ import { Link, useParams } from "react-router-dom";
 import { Button } from "@/components/atoms/Button";
 import { LayoutCard } from "@/components/atoms/LayoutCard";
 import { SmartImage } from "@/components/atoms/SmartImage";
+import { RatingStars } from "@/components/atoms/RatingStars";
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
-import { useAuth } from "@/contexts/useAuth";
-import { useAuthPrompt } from "@/contexts/AuthPromptContext";
 import { fetchProduct } from "@/services/productService";
 import dronePlaceholder from "@/assets/images/common/drone-placeholder.png";
 import { getProductPromo, applyDiscount } from "@/data/promotions";
@@ -22,8 +21,6 @@ const ProductPage = () => {
 
   const { isFavorite, toggle } = useFavorites();
   const { state, add, remove } = useCart();
-  const { isAuthenticated } = useAuth();
-  const { prompt } = useAuthPrompt();
 
   if (isLoading)
     return (
@@ -93,6 +90,9 @@ const ProductPage = () => {
           <p style={{ color: "var(--color-muted-fg)" }}>
             {data.brand} · {data.category}
           </p>
+          {data.rating > 0 && (
+            <RatingStars value={data.rating} size={16} showValue />
+          )}
           <div
             style={{
               display: "flex",
@@ -168,10 +168,6 @@ const ProductPage = () => {
                     : undefined
                 }
                 onClick={() => {
-                  if (!isAuthenticated) {
-                    prompt();
-                    return;
-                  }
                   if (inCart) {
                     remove(data.id);
                     return;

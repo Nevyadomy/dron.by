@@ -1,4 +1,5 @@
 import {
+  ArrowRight,
   Heart,
   LogOut,
   Menu,
@@ -9,7 +10,7 @@ import {
   User,
   X,
 } from "lucide-react";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Input } from "@/components/atoms/Input";
 import { Badge } from "@/components/atoms/Badge";
@@ -17,6 +18,7 @@ import { useAuth } from "@/contexts/useAuth";
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useTheme } from "@/hooks/useTheme";
+import { LOCAL_PRODUCTS, searchLocal } from "@/data/products";
 import { cn } from "@/utils/cn";
 import logoImg from "@/assets/images/common/logo.png";
 import styles from "./Header.module.css";
@@ -31,15 +33,9 @@ const navItems = [
 
 export interface HeaderProps {
   searchQuery?: string;
-  onSearchChange?: (q: string) => void;
-  onSearchSubmit?: (q: string) => void;
 }
 
-export const Header = ({
-  searchQuery = "",
-  onSearchChange,
-  onSearchSubmit,
-}: HeaderProps) => {
+export const Header = ({ searchQuery = "" }: HeaderProps) => {
   const { theme, toggle } = useTheme();
   const { count: favCount } = useFavorites();
   const { totalCount: cartCount } = useCart();
@@ -48,6 +44,8 @@ export const Header = ({
   const [localQuery, setLocalQuery] = useState(searchQuery);
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [suggestOpen, setSuggestOpen] = useState(false);
+  const searchRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     if (menuOpen) {
@@ -58,17 +56,55 @@ export const Header = ({
     return () => document.body.classList.remove("no-scroll");
   }, [menuOpen]);
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) =>
-      e.key === "Escape" && setMenuOpen(false);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMenuOpen(false);
+        setSuggestOpen(false);
+        setMobileSearchOpen(false);
+      }
+    };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // Close suggestions on outside click.
+  useEffect(() => {
+    if (!suggestOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (!searchRef.current?.contains(e.target as Node)) setSuggestOpen(false);
+    };
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, [suggestOpen]);
+  const trimmed = localQuery.trim();
+  const suggestions = useMemo(() => {
+    if (!trimmed)
+      return {
+        categories: [],
+        brands: [],
+        products: [] as typeof LOCAL_PRODUCTS,
+      };
+    const q = trimmed.toLowerCase();
+    const cats = Array.from(new Set(LOCAL_PRODUCTS.map((p) => p.category)))
+      .filter((c) => c.toLowerCase().includes(q))
+      .slice(0, 6);
+    const brnds = Array.from(new Set(LOCAL_PRODUCTS.map((p) => p.brand)))
+      .filter((b) => b.toLowerCase().includes(q))
+      .slice(0, 6);
+    const prods = searchLocal(LOCAL_PRODUCTS, trimmed).slice(0, 5);
+    return { categories: cats, brands: brnds, products: prods };
+  }, [trimmed]);
+  const goSearch = (q: string) => {
+    const v = q.trim();
+    setSuggestOpen(false);
+    setMobileSearchOpen(false);
+    if (v) navigate(`/search?q=${encodeURIComponent(v)}`);
+    else navigate("/search");
+  };
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const q = localQuery.trim();
-    onSearchChange?.(q);
-    onSearchSubmit?.(q);
+    goSearch(localQuery);
   };
 
   const closeMenu = () => setMenuOpen(false);
@@ -87,18 +123,20 @@ export const Header = ({
         </Link>
 
         <form
+          ref={searchRef}
           className={cn(styles.search, mobileSearchOpen && styles.searchOpen)}
-          onSubmit={(e) => {
-            handleSubmit(e);
-            setMobileSearchOpen(false);
-          }}
+          onSubmit={handleSubmit}
           role="search"
         >
           <Input
             type="search"
             placeholder="Поиск по сайту"
             value={localQuery}
-            onChange={(e) => setLocalQuery(e.target.value)}
+            onChange={(e) => {
+              setLocalQuery(e.target.value);
+              setSuggestOpen(true);
+            }}
+            onFocus={() => setSuggestOpen(true)}
             className={styles.searchInput}
           />
           <button
@@ -109,6 +147,90 @@ export const Header = ({
           >
             <Search size={16} />
           </button>
+
+          {suggestOpen && trimmed && (
+            <div className={styles.suggest} role="listbox">
+              {(suggestions.categories.length > 0 ||
+                suggestions.brands.length > 0) && (
+                <div className={styles.suggestSection}>
+                  <div className={styles.suggestLabel}>Категории и бренды</div>
+                  <div className={styles.chips}>
+                    {suggestions.categories.map((c) => (
+                      <button
+                        type="button"
+                        key={`c-${c}`}
+                        className={styles.chip}
+                        onClick={() => goSearch(c)}
+                      >
+                        {c}
+                      </button>
+                    ))}
+                    {suggestions.brands.map((b) => (
+                      <button
+                        type="button"
+                        key={`b-${b}`}
+                        className={styles.chip}
+                        onClick={() => goSearch(b)}
+                      >
+                        {b}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {suggestions.products.length > 0 && (
+                <div className={styles.suggestSection}>
+                  <div className={styles.suggestLabel}>Товары</div>
+                  <ul className={styles.suggestList}>
+                    {suggestions.products.map((p) => (
+                      <li key={p.id}>
+                        <button
+                          type="button"
+                          className={styles.suggestItem}
+                          onClick={() => {
+                            setSuggestOpen(false);
+                            setMobileSearchOpen(false);
+                            navigate(`/product/${p.id}`);
+                          }}
+                        >
+                          <span className={styles.suggestThumb}>
+                            {p.thumbnail && (
+                              <img src={p.thumbnail} alt="" loading="lazy" />
+                            )}
+                          </span>
+                          <span className={styles.suggestText}>
+                            <span className={styles.suggestTitle}>
+                              {p.title}
+                            </span>
+                            <span className={styles.suggestMeta}>
+                              {p.category} · {p.brand}
+                            </span>
+                          </span>
+                          <ArrowRight
+                            size={16}
+                            className={styles.suggestArrow}
+                          />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {suggestions.products.length === 0 &&
+                suggestions.categories.length === 0 &&
+                suggestions.brands.length === 0 && (
+                  <div className={styles.suggestEmpty}>Ничего не найдено</div>
+                )}
+              <button
+                type="button"
+                className={styles.suggestAll}
+                onClick={() => goSearch(localQuery)}
+              >
+                Все результаты по «{trimmed}»
+                <ArrowRight size={14} />
+              </button>
+            </div>
+          )}
         </form>
 
         <div className={styles.mobileTools}>

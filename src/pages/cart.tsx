@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/atoms/Button";
 import { LayoutCard } from "@/components/atoms/LayoutCard";
@@ -26,6 +26,7 @@ const CartPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [buyingId, setBuyingId] = useState<number | null>(null);
 
   const discount = state.items.reduce((sum, i) => {
     const promo = getProductPromo(i.id);
@@ -68,7 +69,7 @@ const CartPage = () => {
     );
   }
 
-  const handleCheckout = async () => {
+  const submitOrder = async (itemIds?: number[]) => {
     if (!isAuthenticated || !user) {
       prompt();
       return;
@@ -80,7 +81,18 @@ const CartPage = () => {
     setError(null);
     setSubmitting(true);
 
-    const orderItems = state.items
+    const items = itemIds
+      ? state.items.filter((i) => itemIds.includes(i.id))
+      : state.items;
+    const orderTotal = items.reduce((sum, i) => {
+      const promo = getProductPromo(i.id);
+      const price =
+        promo && promo.discount > 0
+          ? applyDiscount(i.price, promo.discount)
+          : i.price;
+      return sum + price * i.quantity;
+    }, 0);
+    const orderItems = items
       .map(
         (i) =>
           `• ${i.title} × ${i.quantity} = ${(i.price * i.quantity).toFixed(2)} BYN`,
@@ -90,7 +102,7 @@ const CartPage = () => {
       `Заказ в DRON.BY\n\n` +
       `Здравствуйте, ${user.name || user.email}!\n\n` +
       `Ваш заказ оформлен:\n${orderItems}\n\n` +
-      `Итого: ${total.toFixed(2)} BYN\n\n` +
+      `Итого: ${orderTotal.toFixed(2)} BYN\n\n` +
       `Спасибо за покупку!`;
 
     try {
@@ -108,13 +120,17 @@ const CartPage = () => {
             subject: "Заказ в DRON.BY",
             message,
             order_items: orderItems,
-            total: `${total.toFixed(2)} BYN`,
+            total: `${orderTotal.toFixed(2)} BYN`,
           }),
         });
         if (!res.ok)
           throw new Error("Не удалось отправить заказ. Попробуйте позже.");
       }
-      clear();
+      if (itemIds) {
+        itemIds.forEach((id) => remove(id));
+      } else {
+        clear();
+      }
       setSuccess(true);
     } catch (e) {
       setError(
@@ -122,7 +138,14 @@ const CartPage = () => {
       );
     } finally {
       setSubmitting(false);
+      setBuyingId(null);
     }
+  };
+
+  const handleCheckout = () => submitOrder();
+  const handleBuyOne = (id: number) => {
+    setBuyingId(id);
+    submitOrder([id]);
   };
 
   return (
@@ -184,8 +207,20 @@ const CartPage = () => {
                   <Plus size={14} />
                 </button>
               </div>
+              <button
+                type="button"
+                className={styles.buyBtn}
+                onClick={() => handleBuyOne(item.id)}
+                disabled={submitting}
+                title="Купить этот товар"
+              >
+                <ShoppingBag size={14} />
+                <span>
+                  {buyingId === item.id && submitting ? "…" : "Купить"}
+                </span>
+              </button>
               <strong className={styles.price}>
-                {(item.price * item.quantity).toFixed(2)}{" "}
+                {(item.price * item.quantity).toFixed(2)}
                 <i className="nbrb-icon">BYN</i>
               </strong>
               <button

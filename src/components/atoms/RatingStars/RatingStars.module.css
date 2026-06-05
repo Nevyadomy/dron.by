@@ -1,0 +1,29 @@
+.wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-primary);
+  font-size: 12px;
+  line-height: 1;
+}
+.stack {
+  position: relative;
+  display: inline-block;
+  height: 1em;
+}
+.base, .fill {
+  display: inline-flex;
+  gap: 2px;
+  color: var(--color-border);
+  white-space: nowrap;
+}
+.fill {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  color: var(--color-primary);
+}
+.value {
+  color: var(--color-muted-fg);
+  font-weight: 600;
+}

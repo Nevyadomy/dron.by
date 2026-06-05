@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 import {
@@ -8,6 +8,7 @@ import {
 import { FilterModal } from "@/components/organisms/FilterModal";
 import { ProductGrid } from "@/components/organisms/ProductGrid";
 import { Breadcrumbs } from "@/components/molecules/Breadcrumbs";
+import { Pagination } from "@/components/molecules/Pagination";
 import { fetchProducts } from "@/services/productService";
 import { productsWord } from "@/utils/pluralize";
 import s from "./catalog.module.css";
@@ -43,11 +44,24 @@ const CatalogPage = () => {
     null,
   );
   const [inStockOnly, setInStockOnly] = useState(false);
+  const [selectedRating, setSelectedRating] = useState<number | null>(null);
   const [sortBy, setSortBy] = useState("price-asc");
+
+  // Responsive page size: 40 on desktop, 20 on mobile.
+  const [pageSize, setPageSize] = useState(() =>
+    typeof window !== "undefined" && window.innerWidth <= 768 ? 20 : 40,
+  );
+  useEffect(() => {
+    const onResize = () => setPageSize(window.innerWidth <= 768 ? 20 : 40);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+  const page = Math.max(1, parseInt(params.get("page") ?? "1", 10) || 1);
 
   const productsQuery = useQuery({
     queryKey: ["products", { search }],
-    queryFn: () => fetchProducts({ limit: 100, search: search || undefined }),
+    // Fetch full list locally; client-side filtering/pagination follows.
+    queryFn: () => fetchProducts({ limit: 1000, search: search || undefined }),
   });
 
   const allProducts = useMemo(
@@ -78,6 +92,8 @@ const CatalogPage = () => {
       result = result.filter((p) => p.price >= r.min && p.price < r.max);
     }
     if (inStockOnly) result = result.filter((p) => (p.stock ?? 0) > 0);
+    if (selectedRating !== null)
+      result = result.filter((p) => (p.rating ?? 0) >= selectedRating);
 
     switch (sortBy) {
       case "price-asc":
@@ -100,8 +116,42 @@ const CatalogPage = () => {
     selectedBrands,
     selectedPriceRange,
     inStockOnly,
+    selectedRating,
     sortBy,
   ]);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const pageItems = useMemo(
+    () => filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize),
+    [filtered, currentPage, pageSize],
+  );
+  // Reset to first page whenever filter set or page size changes.
+  const filterKey = [
+    search,
+    selectedCategories.join("|"),
+    selectedBrands.join("|"),
+    selectedPriceRange,
+    inStockOnly,
+    selectedRating,
+    sortBy,
+    pageSize,
+  ].join("§");
+  const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
+  if (prevFilterKey !== filterKey) {
+    setPrevFilterKey(filterKey);
+    if (params.get("page")) {
+      const next = new URLSearchParams(params);
+      next.delete("page");
+      setParams(next, { replace: true });
+    }
+  }
+  const setPage = (p: number) => {
+    const next = new URLSearchParams(params);
+    if (p > 1) next.set("page", String(p));
+    else next.delete("page");
+    setParams(next, { replace: false });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const toggle = (arr: string[], val: string, set: (v: string[]) => void) =>
     set(arr.includes(val) ? arr.filter((x) => x !== val) : [...arr, val]);
@@ -111,13 +161,15 @@ const CatalogPage = () => {
     setSelectedBrands([]);
     setSelectedPriceRange(null);
     setInStockOnly(false);
+    setSelectedRating(null);
   };
 
   const activeFilterCount =
     selectedCategories.length +
     selectedBrands.length +
     (selectedPriceRange !== null ? 1 : 0) +
-    (inStockOnly ? 1 : 0);
+    (inStockOnly ? 1 : 0) +
+    (selectedRating !== null ? 1 : 0);
 
   return (
     <div className="page-container">
@@ -136,12 +188,14 @@ const CatalogPage = () => {
             selectedBrands={selectedBrands}
             selectedPriceRange={selectedPriceRange}
             inStockOnly={inStockOnly}
+            selectedRating={selectedRating}
             onCategoryToggle={(c) =>
               toggle(selectedCategories, c, setSelectedCategories)
             }
             onBrandToggle={(b) => toggle(selectedBrands, b, setSelectedBrands)}
             onPriceRangeChange={setSelectedPriceRange}
             onInStockChange={setInStockOnly}
+            onRatingChange={setSelectedRating}
             onReset={resetFilters}
           />
         </FilterModal>
@@ -189,13 +243,19 @@ const CatalogPage = () => {
           </div>
 
           <ProductGrid
-            products={filtered}
+            products={pageItems}
             isLoading={productsQuery.isLoading}
             error={
               productsQuery.error
                 ? (productsQuery.error as Error).message
                 : null
             }
+          />
+
+          <Pagination
+            page={currentPage}
+            totalPages={totalPages}
+            onChange={setPage}
           />
         </div>
       </div>

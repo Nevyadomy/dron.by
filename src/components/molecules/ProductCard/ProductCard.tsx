@@ -2,10 +2,9 @@ import { Heart, ShoppingCart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { LayoutCard } from "@/components/atoms/LayoutCard";
 import { SmartImage } from "@/components/atoms/SmartImage";
+import { RatingStars } from "@/components/atoms/RatingStars";
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
-import { useAuth } from "@/contexts/useAuth";
-import { useAuthPrompt } from "@/contexts/AuthPromptContext";
 import type { Product } from "@/schemas/product.schema";
 import dronePlaceholder from "@/assets/images/common/drone-placeholder.png";
 import { getProductPromo, applyDiscount } from "@/data/promotions";
@@ -19,8 +18,6 @@ export interface ProductCardProps {
 export const ProductCard = ({ product }: ProductCardProps) => {
   const { isFavorite, toggle } = useFavorites();
   const { state, add, remove } = useCart();
-  const { isAuthenticated } = useAuth();
-  const { prompt } = useAuthPrompt();
   const navigate = useNavigate();
   const inCart = state.items.some((i) => i.id === product.id);
   const fav = isFavorite(product.id);
@@ -57,6 +54,9 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         <p className={styles.name}>
           <Link to={`/product/${product.id}`}>{product.title}</Link>
         </p>
+        {product.rating > 0 && (
+          <RatingStars value={product.rating} size={13} showValue />
+        )}
         <p
           className={cn(
             styles.price,
@@ -113,10 +113,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               disabled={!inStock}
               onClick={() => {
                 if (!inStock) return;
-                if (!isAuthenticated) {
-                  prompt();
-                  return;
-                }
                 if (inCart) {
                   remove(product.id);
                   return;

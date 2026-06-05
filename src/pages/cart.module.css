@@ -38,7 +38,7 @@
 
 .row {
   display: grid;
-  grid-template-columns: 96px minmax(0, 1fr) auto auto auto;
+  grid-template-columns: 96px minmax(0, 1fr) auto auto auto auto;
   gap: 16px;
   align-items: center;
   padding: 18px 4px;
@@ -52,7 +52,8 @@
     grid-template-areas:
       "thumb price"
       "thumb info"
-      "actions actions";
+      "actions actions"
+      "buy buy";
     column-gap: 14px;
     row-gap: 8px;
     padding: 16px 0;
@@ -61,8 +62,27 @@
   .row > div:nth-child(2) { grid-area: info; min-width: 0; }
   .row > .price { grid-area: price; justify-self: start; align-self: start; min-width: 0; }
   .row > .qty { grid-area: actions; justify-self: start; }
+  .row > .buyBtn { grid-area: buy; justify-self: stretch; }
   .row > .removeBtn { grid-area: actions; justify-self: end; }
 }
+.buyBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  height: 36px;
+  border-radius: var(--radius);
+  background: var(--color-primary);
+  color: var(--color-primary-fg);
+  border: none;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.buyBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+@media (hover: hover) { .buyBtn:not(:disabled):hover { opacity: 0.9; } }
+@media (hover: none)  { .buyBtn:not(:disabled):active { transform: scale(0.97); } }
 @media (max-width: 480px) {
   .row { grid-template-columns: 96px 1fr; }
   .thumb { width: 80px; height: 80px; }

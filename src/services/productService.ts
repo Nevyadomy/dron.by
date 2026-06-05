@@ -4,6 +4,7 @@ import { type Product, type ProductList } from "@/schemas/product.schema";
 export interface FetchProductsParams {
   limit?: number;
   skip?: number;
+  page?: number;
   search?: string;
   category?: string;
 }
@@ -14,7 +15,8 @@ const simulate = <T>(value: T, ms = 150): Promise<T> =>
 export async function fetchProducts(
   params: FetchProductsParams = {},
 ): Promise<ProductList> {
-  const { limit = 30, skip = 0, search, category } = params;
+  const { limit = 30, search, category, page } = params;
+  const skip = page && page > 0 ? (page - 1) * limit : (params.skip ?? 0);
   let items = [...LOCAL_PRODUCTS];
   if (category) items = items.filter((p) => p.category === category);
   if (search) items = searchLocal(items, search);
