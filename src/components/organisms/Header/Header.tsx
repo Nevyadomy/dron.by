@@ -1,19 +1,21 @@
 import {
   ArrowRight,
   Heart,
-  LogOut,
   Menu,
   Moon,
   Search,
   ShoppingCart,
   Sun,
   User,
+  LogOut,
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Input } from "@/components/atoms/Input";
 import { Badge } from "@/components/atoms/Badge";
+import { LanguageSwitcher } from "@/components/atoms/LanguageSwitcher";
 import { useAuth } from "@/contexts/useAuth";
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
@@ -23,12 +25,13 @@ import { cn } from "@/utils/cn";
 import logoImg from "@/assets/images/common/logo.png";
 import styles from "./Header.module.css";
 
-const navItems = [
-  { label: "Главная", to: "/" },
-  { label: "Каталог", to: "/catalog" },
-  { label: "Акции", to: "/promotions" },
-  { label: "Новости", to: "/news" },
-  { label: "Контакты", to: "/contacts" },
+const NAV_KEYS: { key: string; to: string }[] = [
+  { key: "home", to: "/" },
+  { key: "catalog", to: "/catalog" },
+  { key: "promotions", to: "/promotions" },
+  { key: "news", to: "/news" },
+  { key: "contacts", to: "/contacts" },
+  { key: "about", to: "/about" },
 ];
 
 export interface HeaderProps {
@@ -37,6 +40,11 @@ export interface HeaderProps {
 
 export const Header = ({ searchQuery = "" }: HeaderProps) => {
   const { theme, toggle } = useTheme();
+  const { t } = useTranslation();
+  const navItems = NAV_KEYS.map((n) => ({
+    to: n.to,
+    label: t(`nav.${n.key}`),
+  }));
   const { count: favCount } = useFavorites();
   const { totalCount: cartCount } = useCart();
   const { user, isAuthenticated, logout } = useAuth();
@@ -130,7 +138,7 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
         >
           <Input
             type="search"
-            placeholder="Поиск по сайту"
+            placeholder={t("header.search")}
             value={localQuery}
             onChange={(e) => {
               setLocalQuery(e.target.value);
@@ -142,8 +150,8 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
           <button
             type="submit"
             className={styles.searchBtn}
-            aria-label="Найти"
-            title="Найти"
+            aria-label={t("header.find")}
+            title={t("header.find")}
           >
             <Search size={16} />
           </button>
@@ -238,28 +246,31 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
             type="button"
             className={styles.iconBtn}
             onClick={() => setMobileSearchOpen((v) => !v)}
-            aria-label="Поиск"
-            title="Поиск"
+            aria-label={t("header.find")}
+            title={t("header.find")}
           >
             <Search size={20} />
           </button>
           <Link
             to={isAuthenticated ? "/profile" : "/login"}
             className={styles.iconBtn}
-            aria-label={isAuthenticated ? "Профиль" : "Войти"}
-            title={isAuthenticated ? "Профиль" : "Войти"}
+            aria-label={
+              isAuthenticated ? t("header.profile") : t("header.login")
+            }
+            title={isAuthenticated ? t("header.profile") : t("header.login")}
           >
             <User size={20} />
           </Link>
         </div>
 
         <div className={styles.actions}>
+          <LanguageSwitcher />
           <button
             type="button"
             className={cn(styles.iconBtn, styles.themeBtn)}
             onClick={toggle}
-            title="Переключить тему"
-            aria-label="Переключить тему"
+            title={t("header.theme")}
+            aria-label={t("header.theme")}
           >
             {theme === "light" ? (
               <Moon key="moon" size={20} />
@@ -271,8 +282,8 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
           <Link
             to="/favorites"
             className={styles.iconBtn}
-            aria-label="Избранное"
-            title="Избранное"
+            aria-label={t("header.favorites")}
+            title={t("header.favorites")}
           >
             <Heart size={20} />
             {favCount > 0 && <Badge floating>{favCount}</Badge>}
@@ -281,41 +292,40 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
           <Link
             to="/cart"
             className={styles.iconBtn}
-            aria-label="Корзина"
-            title="Корзина"
+            aria-label={t("header.cart")}
+            title={t("header.cart")}
           >
             <ShoppingCart size={20} />
             {cartCount > 0 && <Badge floating>{cartCount}</Badge>}
           </Link>
 
           {isAuthenticated ? (
-            <>
-              <Link
-                to="/profile"
-                className={styles.userName}
-                title="Личный кабинет"
-              >
+            <Link
+              to="/profile"
+              className={styles.userBlock}
+              title={t("header.profile")}
+            >
+              {user?.avatar || user?.picture ? (
+                <img
+                  src={user.avatar || user.picture}
+                  alt=""
+                  className={styles.userAvatar}
+                />
+              ) : (
+                <span className={styles.iconBtn} aria-hidden>
+                  <User size={20} />
+                </span>
+              )}
+              <span className={styles.userName}>
                 {user?.name || user?.email}
-              </Link>
-              <button
-                type="button"
-                className={styles.iconBtn}
-                onClick={() => {
-                  logout();
-                  navigate("/login");
-                }}
-                aria-label="Выйти"
-                title="Выйти"
-              >
-                <LogOut size={20} />
-              </button>
-            </>
+              </span>
+            </Link>
           ) : (
             <Link
               to="/login"
               className={styles.iconBtn}
-              aria-label="Войти"
-              title="Войти"
+              aria-label={t("header.login")}
+              title={t("header.login")}
             >
               <User size={20} />
             </Link>
@@ -324,8 +334,8 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
         <button
           type="button"
           className={styles.burger}
-          aria-label="Открыть меню"
-          title="Меню"
+          aria-label={t("header.menu")}
+          title={t("header.menu")}
           onClick={() => setMenuOpen(true)}
         >
           <Menu size={24} />
@@ -437,9 +447,20 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
                     }}
                   >
                     <LogOut size={20} />
-                    <span>Выйти ({user?.name || user?.email})</span>
+                    <span>
+                      {t("header.logout")} ({user?.name || user?.email})
+                    </span>
                   </button>
                 )}
+                <div
+                  style={{
+                    padding: "12px 0",
+                    display: "flex",
+                    justifyContent: "flex-start",
+                  }}
+                >
+                  <LanguageSwitcher />
+                </div>
               </div>
             </div>
           </div>

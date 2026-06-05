@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/atoms/Button";
 import { LayoutCard } from "@/components/atoms/LayoutCard";
 import { Breadcrumbs } from "@/components/molecules/Breadcrumbs";
@@ -23,6 +23,7 @@ const CartPage = () => {
   const { user, isAuthenticated } = useAuth();
   const { prompt } = useAuthPrompt();
   const { format } = useCurrency();
+  const navigate = useNavigate();
 
   const [consent, setConsent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -143,7 +144,17 @@ const CartPage = () => {
     }
   };
 
-  const handleCheckout = () => submitOrder();
+  const handleCheckout = () => {
+    if (!isAuthenticated || !user) {
+      prompt();
+      return;
+    }
+    if (!consent) {
+      setError("Подтвердите согласие с правилами.");
+      return;
+    }
+    navigate("/checkout");
+  };
   const handleBuyOne = (id: number) => {
     setBuyingId(id);
     submitOrder([id]);

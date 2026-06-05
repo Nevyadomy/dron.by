@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { ProductSpecs } from "./productSpecs.schema";
 
 export const productSchema = z.object({
   id: z.number(),
@@ -11,6 +12,13 @@ export const productSchema = z.object({
   images: z.array(z.string()).optional().default([]),
   stock: z.number().optional().default(0),
   rating: z.number().optional().default(0),
+  /**
+   * Detailed product spec used by the comparison page. Optional — only
+   * present on products we have authored detailed data for.
+   */
+  spec: z
+    .custom<ProductSpecs>((v) => typeof v === "object" && v !== null)
+    .optional(),
 });
 
 export const productListSchema = z.object({

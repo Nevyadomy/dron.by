@@ -222,10 +222,9 @@ const RegisterPage = () => {
             <Button type="submit" fullWidth disabled={submitting}>
               {submitting ? "Отправка" : "Зарегистрироваться"}
             </Button>
+            <OAuthRow />
           </form>
         )}
-
-        {!done && <OAuthRow />}
 
         <p
           style={{

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { Link, Navigate, useSearchParams } from "react-router-dom";
 import {
   Heart,
@@ -6,6 +6,7 @@ import {
   MessageSquare,
   Package,
   ShoppingBag,
+  ShoppingCart,
   Trash2,
   User,
   Wallet,
@@ -13,8 +14,14 @@ import {
 import { Breadcrumbs } from "@/components/molecules/Breadcrumbs";
 import { LayoutCard } from "@/components/atoms/LayoutCard";
 import { Button } from "@/components/atoms/Button";
+import { SmartImage } from "@/components/atoms/SmartImage";
+import { ConfirmModal } from "@/components/organisms/ConfirmModal";
 import { useAuth } from "@/contexts/useAuth";
 import { useCurrency } from "@/hooks/useCurrency";
+import { useFavorites } from "@/contexts/FavoritesContext";
+import { useCart } from "@/contexts/CartContext";
+import { LOCAL_PRODUCTS } from "@/data/products";
+import dronePlaceholder from "@/assets/images/common/drone-placeholder.png";
 import type { CurrencyCode } from "@/contexts/currency-context";
 import { cn } from "@/utils/cn";
 import s from "./profile.module.css";
@@ -168,17 +175,7 @@ const ProfilePage = () => {
               onCurrencyChange={(c) => updateUser({ currency: c })}
             />
           )}
-          {tab === "favorites" && (
-            <div className={s.emptyBox}>
-              <p>
-                Перейдите в раздел избранного, чтобы посмотреть сохранённые
-                товары.
-              </p>
-              <Link to="/favorites">
-                <Button>Открыть избранное</Button>
-              </Link>
-            </div>
-          )}
+          {tab === "favorites" && <FavoritesTab />}
         </LayoutCard>
       </div>
     </div>
@@ -368,7 +365,8 @@ const PaymentsSection = ({
   const [exp, setExp] = useState("");
   const [cvv, setCvv] = useState("");
   const [holder, setHolder] = useState("");
-  const [err, setErr] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [confirmId, setConfirmId] = useState<string | null>(null);
 
   useEffect(() => {
     saveCards(userId, cards);
@@ -379,28 +377,37 @@ const PaymentsSection = ({
     setExp("");
     setCvv("");
     setHolder("");
-    setErr(null);
+    setErrors({});
+  };
+  const validate = (): Record<string, string> => {
+    const e: Record<string, string> = {};
+    const cleanNum = num.replace(/\s+/g, "");
+    if (!/^\d{13,19}$/.test(cleanNum))
+      e.num = "Введите 13–19 цифр номера карты";
+    if (!/^\d{2}\/\d{2}$/.test(exp)) {
+      e.exp = "Формат MM/YY";
+    } else {
+      const [mm, yy] = exp.split("/").map((x) => parseInt(x, 10));
+      const now = new Date();
+      const curYear = now.getFullYear() % 100;
+      const curMonth = now.getMonth() + 1;
+      if (mm < 1 || mm > 12) e.exp = "Месяц 01–12";
+      else if (yy < curYear || (yy === curYear && mm < curMonth))
+        e.exp = "Срок истёк";
+    }
+    if (!/^\d{3,4}$/.test(cvv)) e.cvv = "3–4 цифры";
+    if (holder.trim().length < 2) e.holder = "Минимум 2 символа";
+    return e;
   };
 
   const addCard = (e: FormEvent) => {
     e.preventDefault();
+    const v = validate();
+    if (Object.keys(v).length) {
+      setErrors(v);
+      return;
+    }
     const cleanNum = num.replace(/\s+/g, "");
-    if (cleanNum.length < 13 || cleanNum.length > 19) {
-      setErr("Некорректный номер карты");
-      return;
-    }
-    if (!/^\d{2}\/\d{2}$/.test(exp)) {
-      setErr("Срок в формате MM/YY");
-      return;
-    }
-    if (!/^\d{3,4}$/.test(cvv)) {
-      setErr("Некорректный CVV");
-      return;
-    }
-    if (holder.trim().length < 2) {
-      setErr("Укажите имя держателя");
-      return;
-    }
     const card: SavedCard = {
       id: `${Date.now()}`,
       last4: cleanNum.slice(-4),
@@ -413,9 +420,10 @@ const PaymentsSection = ({
     reset();
   };
 
-  const removeCard = (id: string) => {
-    if (!confirm("Удалить карту?")) return;
-    setCards((c) => c.filter((x) => x.id !== id));
+  const confirmRemove = () => {
+    if (!confirmId) return;
+    setCards((c) => c.filter((x) => x.id !== confirmId));
+    setConfirmId(null);
   };
 
   return (
@@ -465,7 +473,7 @@ const PaymentsSection = ({
             <button
               type="button"
               className={s.cardDel}
-              onClick={() => removeCard(c.id)}
+              onClick={() => setConfirmId(c.id)}
               aria-label="Удалить"
               title="Удалить"
             >
@@ -486,6 +494,7 @@ const PaymentsSection = ({
               placeholder="0000 0000 0000 0000"
               onChange={(e) => setNum(formatNum(e.target.value))}
             />
+            {errors.num && <p className={s.formError}>{errors.num}</p>}
           </div>
           <div>
             <div className={s.fieldLabel}>Срок (MM/YY)</div>
@@ -496,6 +505,7 @@ const PaymentsSection = ({
               placeholder="MM/YY"
               onChange={(e) => setExp(formatExp(e.target.value))}
             />
+            {errors.exp && <p className={s.formError}>{errors.exp}</p>}
           </div>
           <div>
             <div className={s.fieldLabel}>CVV</div>
@@ -507,6 +517,7 @@ const PaymentsSection = ({
               maxLength={4}
               onChange={(e) => setCvv(e.target.value.replace(/\D/g, ""))}
             />
+            {errors.cvv && <p className={s.formError}>{errors.cvv}</p>}
           </div>
           <div className={s.cardFormFull}>
             <div className={s.fieldLabel}>Имя держателя</div>
@@ -516,8 +527,8 @@ const PaymentsSection = ({
               placeholder="IVAN IVANOV"
               onChange={(e) => setHolder(e.target.value.toUpperCase())}
             />
+            {errors.holder && <p className={s.formError}>{errors.holder}</p>}
           </div>
-          {err && <p className={cn(s.formError, s.cardFormFull)}>{err}</p>}
           <div className={cn(s.toolbar, s.cardFormFull)}>
             <Button type="submit">Сохранить карту</Button>
             <Button
@@ -537,6 +548,110 @@ const PaymentsSection = ({
           Добавить карту
         </Button>
       )}
+
+      <ConfirmModal
+        open={confirmId !== null}
+        title="Удалить карту?"
+        text="Карта будет удалена без возможности восстановления."
+        confirmLabel="Удалить"
+        destructive
+        onConfirm={confirmRemove}
+        onCancel={() => setConfirmId(null)}
+      />
+    </div>
+  );
+};
+const FavoritesTab = () => {
+  const { ids, remove } = useFavorites();
+  const { state, add, remove: cartRemove } = useCart();
+  const { format } = useCurrency();
+  const products = useMemo(
+    () => LOCAL_PRODUCTS.filter((p) => ids.includes(p.id)),
+    [ids],
+  );
+  if (products.length === 0) {
+    return (
+      <div className={s.emptyBox}>
+        <div style={{ color: "var(--color-muted-fg)", marginBottom: 12 }}>
+          <Heart size={32} />
+        </div>
+        <h2
+          style={{
+            fontSize: 18,
+            fontWeight: 600,
+            color: "var(--color-fg)",
+            marginBottom: 8,
+          }}
+        >
+          Список избранного пуст
+        </h2>
+        <p>Добавляйте товары в избранное, чтобы вернуться к ним позже.</p>
+        <div style={{ marginTop: 16 }}>
+          <Link to="/catalog">
+            <Button>
+              <ShoppingBag size={16} /> Перейти в каталог
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div>
+      <h2 className={s.h1}>Избранное</h2>
+      <div className={s.favList}>
+        {products.map((p) => {
+          const inCart = state.items.some((i) => i.id === p.id);
+          return (
+            <div key={p.id} className={s.favRow}>
+              <Link to={`/product/${p.id}`} className={s.favThumb}>
+                <SmartImage
+                  src={p.thumbnail || dronePlaceholder}
+                  alt={p.title}
+                  loading="lazy"
+                />
+              </Link>
+              <div className={s.favInfo}>
+                <Link to={`/product/${p.id}`} className={s.favName}>
+                  {p.title}
+                </Link>
+                <div className={s.favMeta}>
+                  {p.brand} · {p.category}
+                </div>
+              </div>
+              <strong className={s.favPrice}>{format(p.price)}</strong>
+              <div className={s.favActions}>
+                <button
+                  type="button"
+                  className={s.favCartBtn}
+                  onClick={() => {
+                    if (inCart) cartRemove(p.id);
+                    else
+                      add({
+                        id: p.id,
+                        title: p.title,
+                        price: p.price,
+                        thumbnail: p.thumbnail,
+                      });
+                  }}
+                  disabled={(p.stock ?? 0) === 0}
+                  title={inCart ? "В корзине" : "В корзину"}
+                >
+                  <ShoppingCart size={16} />
+                </button>
+                <button
+                  type="button"
+                  className={s.cardDel}
+                  onClick={() => remove(p.id)}
+                  title="Удалить"
+                >
+                  <Trash2 size={18} />
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

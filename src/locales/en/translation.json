@@ -1,0 +1,51 @@
+{
+  "nav": {
+    "home": "Home",
+    "catalog": "Catalog",
+    "promotions": "Promotions",
+    "news": "News",
+    "contacts": "Contacts",
+    "about": "About"
+  },
+  "header": {
+    "search": "Search the site",
+    "find": "Find",
+    "favorites": "Favorites",
+    "cart": "Cart",
+    "profile": "Profile",
+    "login": "Sign in",
+    "logout": "Sign out",
+    "menu": "Menu",
+    "theme": "Toggle theme"
+  },
+  "footer": {
+    "subscribe": "Subscribe",
+    "subscribeText": "Subscribe to DRON.BY news and be the first to know about new arrivals and promotions.",
+    "howBuy": "How to buy",
+    "info": "Useful info",
+    "personal": "Personal area",
+    "loginAccount": "Sign in to account",
+    "myCart": "My cart",
+    "favItems": "Favorites",
+    "register": "Sign up",
+    "ourContacts": "Our contacts",
+    "news": "News",
+    "promotions": "Deals & discounts",
+    "catalog": "Drone catalog",
+    "about": "About us"
+  },
+  "common": {
+    "buy": "Buy",
+    "addToCart": "Add to cart",
+    "removeFromCart": "Remove from cart",
+    "inStock": "In stock",
+    "outOfStock": "Out of stock",
+    "loading": "Loading…",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "back": "Back"
+  },
+  "breadcrumbs": { "home": "Home" }
+}

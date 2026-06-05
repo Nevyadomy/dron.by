@@ -1,0 +1,51 @@
+{
+  "nav": {
+    "home": "Strona główna",
+    "catalog": "Katalog",
+    "promotions": "Promocje",
+    "news": "Aktualności",
+    "contacts": "Kontakt",
+    "about": "O nas"
+  },
+  "header": {
+    "search": "Szukaj w serwisie",
+    "find": "Szukaj",
+    "favorites": "Ulubione",
+    "cart": "Koszyk",
+    "profile": "Profil",
+    "login": "Zaloguj",
+    "logout": "Wyloguj",
+    "menu": "Menu",
+    "theme": "Zmień motyw"
+  },
+  "footer": {
+    "subscribe": "Zapisz się",
+    "subscribeText": "Zapisz się na newsletter DRON.BY i poznaj nowości oraz promocje jako pierwszy.",
+    "howBuy": "Jak kupić",
+    "info": "Przydatne informacje",
+    "personal": "Strefa osobista",
+    "loginAccount": "Zaloguj do konta",
+    "myCart": "Mój koszyk",
+    "favItems": "Ulubione produkty",
+    "register": "Rejestracja",
+    "ourContacts": "Nasze kontakty",
+    "news": "Aktualności",
+    "promotions": "Promocje i rabaty",
+    "catalog": "Katalog dronów",
+    "about": "O nas"
+  },
+  "common": {
+    "buy": "Kup",
+    "addToCart": "Do koszyka",
+    "removeFromCart": "Usuń z koszyka",
+    "inStock": "Dostępne",
+    "outOfStock": "Niedostępne",
+    "loading": "Ładowanie…",
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "delete": "Usuń",
+    "confirm": "Potwierdź",
+    "back": "Wstecz"
+  },
+  "breadcrumbs": { "home": "Strona główna" }
+}

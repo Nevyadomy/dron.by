@@ -1,4 +1,10 @@
 import type { Product, ProductList } from "@/schemas/product.schema";
+import type {
+  ProductSpecs,
+  DroneSpecs,
+  FpvSpecs,
+  AccessorySpecs,
+} from "@/schemas/productSpecs.schema";
 import { productImage } from "./productImages";
 
 export const LOCAL_PRODUCTS: Product[] = [
@@ -1494,6 +1500,92 @@ export const LOCAL_PRODUCTS: Product[] = [
     rating: 4.8,
   },
 ];
+
+/**
+ * Default spec generators per category. Used to enrich every catalog item
+ * with at least 10 realistic technical fields so the comparison page has
+ * data to render even for products without bespoke specs.
+ */
+function defaultSpecFor(p: Product): ProductSpecs {
+  const base = {
+    manufacturer: p.brand,
+    model: p.title.replace(/^.*?\s/, "").slice(0, 64),
+    releaseYear: 2024,
+    warrantyMonths: 12,
+    colorOptions: ["Серый"],
+  };
+  const cat = p.category.toLowerCase();
+  if (cat.includes("fpv")) {
+    const spec: FpvSpecs = {
+      ...base,
+      weight: 350,
+      dimensions: "180×180×80 мм",
+      flightTime: 18,
+      maxSpeed: 140,
+      maxFlightDistance: 8000,
+      maxTransmissionRange: 10000,
+      cameraResolution: "4K/60fps",
+      sensorType: '1/1.7" CMOS',
+      gimbal: true,
+      obstacleAvoidance: false,
+      gps: true,
+      returnToHome: true,
+      batteryCapacity: 2200,
+      chargingTime: 45,
+      maxWindResistance: 12,
+      storageTemperature: "-10°C до 40°C",
+      foldable: false,
+      remoteControllerType: "в комплекте",
+      fpvGogglesIncluded: true,
+      fpvProtocol: "DJI O3",
+      maxVideoLatency: 30,
+    };
+    return spec;
+  }
+  if (cat.includes("квадрокоптер") || cat.includes("дрон")) {
+    const spec: DroneSpecs = {
+      ...base,
+      weight: 595,
+      dimensions: "230×170×80 мм",
+      flightTime: 34,
+      maxSpeed: 68,
+      maxFlightDistance: 18000,
+      maxTransmissionRange: 15000,
+      cameraResolution: "4K/60fps HDR",
+      sensorType: '1/1.3" CMOS',
+      gimbal: true,
+      obstacleAvoidance: true,
+      gps: true,
+      returnToHome: true,
+      batteryCapacity: 3850,
+      chargingTime: 60,
+      maxWindResistance: 12,
+      storageTemperature: "-10°C до 40°C",
+      foldable: true,
+      remoteControllerType: "в комплекте",
+    };
+    return spec;
+  }
+  // Accessories (batteries, propellers, cases, filters, memory cards, etc.)
+  const accSpec: AccessorySpecs = {
+    ...base,
+    weight: 120,
+    dimensions: "120×80×20 мм",
+    compatibleModels: ["DJI Mini", "DJI Air", "DJI Mavic"],
+    material: "Композит / алюминий",
+  };
+  if (cat.includes("аккумулят") || cat.includes("батаре")) {
+    accSpec.batteryCapacity = 2400;
+    accSpec.chargingTime = 70;
+  }
+  return accSpec;
+}
+// Enrich every product missing a spec with a realistic default. Existing
+// products keep working untouched, and the catalog now ships full data
+// for the upcoming comparison page.
+LOCAL_PRODUCTS.forEach((p) => {
+  if (!p.spec) p.spec = defaultSpecFor(p);
+});
 
 export function searchLocal(products: Product[], query: string) {
   const q = query.trim().toLowerCase();

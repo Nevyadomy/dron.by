@@ -11,13 +11,18 @@ import { Breadcrumbs } from "@/components/molecules/Breadcrumbs";
 import { Pagination } from "@/components/molecules/Pagination";
 import { fetchProducts } from "@/services/productService";
 import { productsWord } from "@/utils/pluralize";
+import { useCurrency } from "@/hooks/useCurrency";
 import s from "./catalog.module.css";
 
-const priceRanges: PriceRange[] = [
-  { label: "До 200 BYN", min: 0, max: 200 },
-  { label: "200 – 600 BYN", min: 200, max: 600 },
-  { label: "600 – 1500 BYN", min: 600, max: 1500 },
-  { label: "Свыше 1500 BYN", min: 1500, max: Infinity },
+/**
+ * Price boundaries are kept in BYN — currency is only used for display labels.
+ * Conversion happens at render time via the active currency.
+ */
+const PRICE_BOUNDS: { min: number; max: number }[] = [
+  { min: 0, max: 200 },
+  { min: 200, max: 600 },
+  { min: 600, max: 1500 },
+  { min: 1500, max: Infinity },
 ];
 
 const sortOptions = [
@@ -29,6 +34,20 @@ const sortOptions = [
 
 const CatalogPage = () => {
   const [params, setParams] = useSearchParams();
+  const { format } = useCurrency();
+  const priceRanges: PriceRange[] = useMemo(
+    () =>
+      PRICE_BOUNDS.map((b) => {
+        let label: string;
+        if (b.min === 0) label = `До ${format(b.max, { decimals: 0 })}`;
+        else if (b.max === Infinity)
+          label = `Свыше ${format(b.min, { decimals: 0 })}`;
+        else
+          label = `${format(b.min, { decimals: 0 })} – ${format(b.max, { decimals: 0 })}`;
+        return { label, min: b.min, max: b.max };
+      }),
+    [format],
+  );
   const search = params.get("q") ?? "";
   const [searchInput, setSearchInput] = useState(search);
 
@@ -118,6 +137,7 @@ const CatalogPage = () => {
     inStockOnly,
     selectedRating,
     sortBy,
+    priceRanges,
   ]);
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const currentPage = Math.min(page, totalPages);

@@ -86,6 +86,7 @@ const LoginPage = () => {
           <Button type="submit" fullWidth disabled={submitting}>
             {submitting ? "Вход…" : "Войти"}
           </Button>
+          <OAuthRow />
         </form>
         <p
           style={{
@@ -99,7 +100,6 @@ const LoginPage = () => {
             Зарегистрироваться
           </Link>
         </p>
-        <OAuthRow />
       </LayoutCard>
     </div>
   );
