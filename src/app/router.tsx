@@ -16,6 +16,7 @@ import ContactsPage from "@/pages/contacts";
 import AboutPage from "@/pages/about";
 import DocsPage from "@/pages/docs.$slug";
 import NotFound from "@/pages/NotFound";
+import ComparePage from "@/pages/compare";
 
 export const AppRouter = () => (
   <Routes>
@@ -31,6 +32,7 @@ export const AppRouter = () => (
       <Route path="/news" element={<NewsPage />} />
       <Route path="/contacts" element={<ContactsPage />} />
       <Route path="/about" element={<AboutPage />} />
+      <Route path="/compare" element={<ComparePage />} />
       <Route path="/docs/:slug" element={<DocsPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />

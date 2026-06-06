@@ -8,6 +8,8 @@ import { CartProvider } from "@/contexts/CartContext";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { AuthPromptProvider } from "@/contexts/AuthPromptContext";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
+import { ComparisonProvider } from "@/contexts/ComparisonContext";
+import { ToastProvider } from "@/components/atoms/Toast";
 
 export const Providers = ({ children }: { children: ReactNode }) => {
   const [client] = useState(
@@ -30,7 +32,11 @@ export const Providers = ({ children }: { children: ReactNode }) => {
           <CurrencyProvider>
             <FavoritesProvider>
               <CartProvider>
-                <AuthPromptProvider>{children}</AuthPromptProvider>
+                <ComparisonProvider>
+                  <AuthPromptProvider>
+                    <ToastProvider>{children}</ToastProvider>
+                  </AuthPromptProvider>
+                </ComparisonProvider>
               </CartProvider>
             </FavoritesProvider>
           </CurrencyProvider>

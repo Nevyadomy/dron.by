@@ -18,8 +18,8 @@ import { SmartImage } from "@/components/atoms/SmartImage";
 import { ConfirmModal } from "@/components/organisms/ConfirmModal";
 import { useAuth } from "@/contexts/useAuth";
 import { useCurrency } from "@/hooks/useCurrency";
-import { useFavorites } from "@/contexts/FavoritesContext";
-import { useCart } from "@/contexts/CartContext";
+import { useFavorites } from "@/contexts/useFavorites";
+import { useCart } from "@/contexts/useCart";
 import { LOCAL_PRODUCTS } from "@/data/products";
 import dronePlaceholder from "@/assets/images/common/drone-placeholder.png";
 import type { CurrencyCode } from "@/contexts/currency-context";
@@ -229,8 +229,8 @@ const ProfileForm = () => {
   const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (!f) return;
-    if (f.size > 2 * 1024 * 1024) {
-      alert("Файл слишком большой. Максимум 2 МБ.");
+    if (f.size > 10 * 1024 * 1024) {
+      alert("Файл слишком большой. Максимум 10 МБ.");
       return;
     }
     const reader = new FileReader();
@@ -623,7 +623,7 @@ const FavoritesTab = () => {
               <div className={s.favActions}>
                 <button
                   type="button"
-                  className={s.favCartBtn}
+                  className={cn(s.favCartBtn, inCart && s.favCartBtnActive)}
                   onClick={() => {
                     if (inCart) cartRemove(p.id);
                     else
@@ -635,7 +635,8 @@ const FavoritesTab = () => {
                       });
                   }}
                   disabled={(p.stock ?? 0) === 0}
-                  title={inCart ? "В корзине" : "В корзину"}
+                  aria-pressed={inCart}
+                  title={inCart ? "Удалить из корзины" : "В корзину"}
                 >
                   <ShoppingCart size={16} />
                 </button>

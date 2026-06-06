@@ -22,10 +22,14 @@ export const Footer = () => {
           <h4 className={styles.heading}>{t("footer.howBuy")}</h4>
           <ul className={styles.links}>
             <li>
-              <Link to="/docs/delivery">Доставка</Link>
+              <Link to="/docs/delivery" className={styles.docLink}>
+                {t("footer.delivery")}
+              </Link>
             </li>
             <li>
-              <Link to="/docs/payment">Оплата</Link>
+              <Link to="/docs/payment" className={styles.docLink}>
+                {t("footer.payment")}
+              </Link>
             </li>
             <li>
               <a
@@ -33,7 +37,7 @@ export const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Публичная оферта
+                {t("footer.offer")}
               </a>
             </li>
             <li>
@@ -42,7 +46,7 @@ export const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Политика возврата товара
+                {t("footer.returnsPolicy")}
               </a>
             </li>
             <li>
@@ -51,7 +55,7 @@ export const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Правила пользования торговой площадкой
+                {t("footer.marketplaceRules")}
               </a>
             </li>
           </ul>
@@ -73,6 +77,9 @@ export const Footer = () => {
             </li>
             <li>
               <Link to="/about">{t("footer.about")}</Link>
+            </li>
+            <li>
+              <Link to="/compare">{t("footer.compare")}</Link>
             </li>
           </ul>
         </div>
@@ -96,7 +103,7 @@ export const Footer = () => {
       </div>
       <div className={styles.bottom}>
         <span>
-          Copyright © 2026 | "DRON.BY" — магазин квадрокоптеров и аксессуаров
+          <span>{t("footer.copyright")}</span>
         </span>
         <a
           href="https://center.gov.by/upload/pdf/politika_personal_data_2024.pdf"
@@ -104,7 +111,7 @@ export const Footer = () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Политика конфиденциальности
+          {t("footer.privacyPolicy")}
         </a>
         <a
           href="/docs/user-agreement.pdf"
@@ -112,7 +119,7 @@ export const Footer = () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Пользовательское соглашение
+          {t("footer.termsOfUse")}
         </a>
       </div>
     </footer>

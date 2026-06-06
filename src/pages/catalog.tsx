@@ -270,6 +270,7 @@ const CatalogPage = () => {
                 ? (productsQuery.error as Error).message
                 : null
             }
+            skeletonCount={pageSize}
           />
 
           <Pagination

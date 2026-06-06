@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/useAuth";
+import { useAuth } from "@/contexts/useAuthPrompt";
 import { findUserByEmail } from "@/services/userStorage";
 import styles from "./OAuthButtons.module.css";
 

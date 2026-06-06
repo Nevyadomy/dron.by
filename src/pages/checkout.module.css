@@ -1,14 +1,16 @@
-.layout {
-  display: grid;
-  grid-template-columns: 1fr 360px;
-  gap: 24px;
-  align-items: start;
+.centered {
+  display: flex;
+  justify-content: center;
   margin-top: 16px;
 }
-@media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+.formCard {
+  width: 100%;
+  max-width: 720px;
+}
 
 .section { padding: 20px; }
 .h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: var(--color-fg); }
+.h2:not(:first-child) { margin-top: 28px; }
 
 .item {
   display: grid;
@@ -27,6 +29,7 @@
 
 .fields { display: flex; flex-direction: column; gap: 14px; }
 .field { display: flex; flex-direction: column; gap: 6px; }
+.fullField { grid-column: 1 / -1; }
 .label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-muted-fg); }
 .input, .textarea {
   width: 100%;
@@ -54,3 +57,53 @@
 .total { font-size: 17px; font-weight: 700; color: var(--color-fg); border-top: 1px solid var(--color-border); padding-top: 10px; margin-top: 6px; }
 .success { color: var(--color-success); font-weight: 600; }
 .serverError { color: var(--color-destructive); margin: 8px 0; font-size: 13px; }
+.radioGroup {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.radioLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.paymentBlock {
+  margin-top: 12px;
+  padding: 16px;
+  background: var(--color-muted);
+  border-radius: var(--radius);
+}
+.cardList { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
+.cardOption {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-card);
+  cursor: pointer;
+  font-size: 14px;
+}
+.cardOptionActive { border-color: var(--color-primary); }
+.cardOption small { color: var(--color-muted-fg); }
+.hint { font-size: 13px; color: var(--color-muted-fg); margin: 8px 0; }
+.cardForm { margin-top: 8px; }
+.cardGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 480px) { .cardGrid { grid-template-columns: 1fr; } }
+.linkBtn {
+  background: none; border: none; padding: 6px 0;
+  color: var(--color-primary); cursor: pointer; font: inherit; font-size: 13px;
+}
+.officeBox {
+  padding: 12px 14px;
+  background: var(--color-muted);
+  border-radius: var(--radius);
+  font-size: 14px;
+  color: var(--color-fg);
+}

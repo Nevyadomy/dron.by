@@ -5,9 +5,9 @@ import { Button } from "@/components/atoms/Button";
 import { LayoutCard } from "@/components/atoms/LayoutCard";
 import { Breadcrumbs } from "@/components/molecules/Breadcrumbs";
 import { SmartImage } from "@/components/atoms/SmartImage";
-import { useCart } from "@/contexts/CartContext";
+import { useCart } from "@/contexts/useCart";
 import { useAuth } from "@/contexts/useAuth";
-import { useAuthPrompt } from "@/contexts/AuthPromptContext";
+import { useAuthPrompt } from "@/contexts/useAuthPrompt";
 import { useCurrency } from "@/hooks/useCurrency";
 import dronePlaceholder from "@/assets/images/common/drone-placeholder.png";
 import { getProductPromo, applyDiscount } from "@/data/promotions";
@@ -25,11 +25,10 @@ const CartPage = () => {
   const { format } = useCurrency();
   const navigate = useNavigate();
 
-  const [consent, setConsent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [buyingId, setBuyingId] = useState<number | null>(null);
+  const [, setBuyingId] = useState<number | null>(null);
 
   const discount = state.items.reduce((sum, i) => {
     const promo = getProductPromo(i.id);
@@ -72,13 +71,10 @@ const CartPage = () => {
     );
   }
 
-  const submitOrder = async (itemIds?: number[]) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _submitOrder = async (itemIds?: number[]) => {
     if (!isAuthenticated || !user) {
       prompt();
-      return;
-    }
-    if (!consent) {
-      setError("Подтвердите согласие с правилами.");
       return;
     }
     setError(null);
@@ -149,15 +145,11 @@ const CartPage = () => {
       prompt();
       return;
     }
-    if (!consent) {
-      setError("Подтвердите согласие с правилами.");
-      return;
-    }
     navigate("/checkout");
   };
   const handleBuyOne = (id: number) => {
     setBuyingId(id);
-    submitOrder([id]);
+    navigate(`/checkout?buyNow=${id}`);
   };
 
   return (
@@ -228,7 +220,7 @@ const CartPage = () => {
               >
                 <ShoppingBag size={14} />
                 <span>
-                  {buyingId === item.id && submitting ? "…" : "Купить"}
+                  <span>Купить</span>
                 </span>
               </button>
               <strong className={styles.price}>
@@ -276,26 +268,6 @@ const CartPage = () => {
             >
               {submitting ? "Оформляем…" : "Оформить заказ"}
             </Button>
-
-            <label className={styles.consent}>
-              <input
-                type="checkbox"
-                className="checkbox"
-                checked={consent}
-                onChange={(e) => setConsent(e.target.checked)}
-              />
-              <span>
-                Соглашаюсь с{" "}
-                <a href="/docs/terms-of-use.pdf">
-                  правилами пользования торговой площадкой
-                </a>{" "}
-                и{" "}
-                <a href="https://belpotreb.by/zakon-o-zashhite-prav-potrebitelej/statya-28/">
-                  возврата
-                </a>
-                .
-              </span>
-            </label>
           </LayoutCard>
         </div>
       </div>

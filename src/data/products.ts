@@ -1506,77 +1506,149 @@ export const LOCAL_PRODUCTS: Product[] = [
  * with at least 10 realistic technical fields so the comparison page has
  * data to render even for products without bespoke specs.
  */
+// Deterministic per-id pseudo-random in [0, 1)
+function rng(id: number, salt: number): number {
+  const x = Math.sin(id * 9301 + salt * 49297) * 233280;
+  return x - Math.floor(x);
+}
+const pick = <T>(id: number, salt: number, arr: T[]): T =>
+  arr[Math.floor(rng(id, salt) * arr.length)];
+const range = (
+  id: number,
+  salt: number,
+  min: number,
+  max: number,
+  step = 1,
+): number => {
+  const v = min + Math.floor(rng(id, salt) * ((max - min) / step + 1)) * step;
+  return v;
+};
+const bool = (id: number, salt: number, p = 0.5): boolean => rng(id, salt) < p;
+const COLORS = [
+  "Серый",
+  "Чёрный",
+  "Белый",
+  "Тёмно-синий",
+  "Серебристый",
+  "Графитовый",
+];
+const SENSORS_DRONE = [
+  '1/1.3" CMOS',
+  '1" CMOS Sony',
+  '1/2" CMOS',
+  "4/3 CMOS Hasselblad",
+  '1/1.7" CMOS',
+];
+const SENSORS_FPV = ['1/1.7" CMOS', '1/2" CMOS', '1/2.3" CMOS'];
+const CAM_DRONE = [
+  "4K/30fps",
+  "4K/60fps HDR",
+  "5.4K/60fps",
+  "6K/30fps",
+  "4K/100fps",
+];
+const CAM_FPV = ["4K/60fps", "2.7K/120fps", "1080p/120fps", "4K/100fps"];
+const FPV_PROTO = [
+  "DJI O3",
+  "DJI O4",
+  "ELRS 2.4 ГГц",
+  "Walksnail Avatar",
+  "Caddx Vista",
+];
+const STORAGE_TEMP = [
+  "-10°C до 40°C",
+  "-5°C до 40°C",
+  "-15°C до 45°C",
+  "0°C до 40°C",
+];
+const RC_TYPES = ["в комплекте", "RC 2 с экраном", "RC-N3", "LiteRadio 3"];
+const MATERIALS = [
+  "Композит / алюминий",
+  "ABS-пластик",
+  "Карбон",
+  "Алюминиевый сплав",
+  "Поликарбонат",
+];
+const ACC_COMPAT_POOL = [
+  ["DJI Mini 3", "DJI Mini 4"],
+  ["DJI Air 3", "DJI Air 3S"],
+  ["DJI Mavic 3", "DJI Mavic 3 Pro"],
+  ["Autel EVO Lite", "Autel EVO Nano"],
+  ["DJI Avata 2", "DJI FPV"],
+  ['Universal 5–8"'],
+];
 function defaultSpecFor(p: Product): ProductSpecs {
+  const id = p.id;
   const base = {
     manufacturer: p.brand,
     model: p.title.replace(/^.*?\s/, "").slice(0, 64),
-    releaseYear: 2024,
-    warrantyMonths: 12,
-    colorOptions: ["Серый"],
+    releaseYear: 2022 + Math.floor(rng(id, 1) * 4), // 2022..2025
+    warrantyMonths: pick(id, 2, [12, 12, 18, 24]),
+    colorOptions: [pick(id, 3, COLORS)],
   };
   const cat = p.category.toLowerCase();
   if (cat.includes("fpv")) {
     const spec: FpvSpecs = {
       ...base,
-      weight: 350,
-      dimensions: "180×180×80 мм",
-      flightTime: 18,
-      maxSpeed: 140,
-      maxFlightDistance: 8000,
-      maxTransmissionRange: 10000,
-      cameraResolution: "4K/60fps",
-      sensorType: '1/1.7" CMOS',
-      gimbal: true,
-      obstacleAvoidance: false,
-      gps: true,
-      returnToHome: true,
-      batteryCapacity: 2200,
-      chargingTime: 45,
-      maxWindResistance: 12,
-      storageTemperature: "-10°C до 40°C",
-      foldable: false,
-      remoteControllerType: "в комплекте",
-      fpvGogglesIncluded: true,
-      fpvProtocol: "DJI O3",
-      maxVideoLatency: 30,
+      weight: range(id, 10, 180, 600, 10),
+      dimensions: `${range(id, 11, 140, 220, 5)}×${range(id, 12, 140, 220, 5)}×${range(id, 13, 60, 110, 5)} мм`,
+      flightTime: range(id, 14, 6, 25),
+      maxSpeed: range(id, 15, 90, 180, 5),
+      maxFlightDistance: range(id, 16, 2000, 12000, 500),
+      maxTransmissionRange: range(id, 17, 4000, 15000, 500),
+      cameraResolution: pick(id, 18, CAM_FPV),
+      sensorType: pick(id, 19, SENSORS_FPV),
+      gimbal: bool(id, 20, 0.5),
+      obstacleAvoidance: bool(id, 21, 0.2),
+      gps: bool(id, 22, 0.7),
+      returnToHome: bool(id, 23, 0.7),
+      batteryCapacity: range(id, 24, 1100, 3000, 100),
+      chargingTime: range(id, 25, 30, 90, 5),
+      maxWindResistance: range(id, 26, 8, 14),
+      storageTemperature: pick(id, 27, STORAGE_TEMP),
+      foldable: bool(id, 28, 0.15),
+      remoteControllerType: pick(id, 29, RC_TYPES),
+      fpvGogglesIncluded: bool(id, 30, 0.8),
+      fpvProtocol: pick(id, 31, FPV_PROTO),
+      maxVideoLatency: range(id, 32, 20, 50),
     };
     return spec;
   }
   if (cat.includes("квадрокоптер") || cat.includes("дрон")) {
     const spec: DroneSpecs = {
       ...base,
-      weight: 595,
-      dimensions: "230×170×80 мм",
-      flightTime: 34,
-      maxSpeed: 68,
-      maxFlightDistance: 18000,
-      maxTransmissionRange: 15000,
-      cameraResolution: "4K/60fps HDR",
-      sensorType: '1/1.3" CMOS',
+      weight: range(id, 40, 135, 1000, 5),
+      dimensions: `${range(id, 41, 150, 320, 5)}×${range(id, 42, 110, 280, 5)}×${range(id, 43, 60, 130, 5)} мм`,
+      flightTime: range(id, 44, 18, 46),
+      maxSpeed: range(id, 45, 40, 90, 1),
+      maxFlightDistance: range(id, 46, 5000, 25000, 500),
+      maxTransmissionRange: range(id, 47, 6000, 20000, 500),
+      cameraResolution: pick(id, 48, CAM_DRONE),
+      sensorType: pick(id, 49, SENSORS_DRONE),
       gimbal: true,
-      obstacleAvoidance: true,
+      obstacleAvoidance: bool(id, 50, 0.75),
       gps: true,
       returnToHome: true,
-      batteryCapacity: 3850,
-      chargingTime: 60,
-      maxWindResistance: 12,
-      storageTemperature: "-10°C до 40°C",
-      foldable: true,
-      remoteControllerType: "в комплекте",
+      batteryCapacity: range(id, 51, 2200, 5500, 50),
+      chargingTime: range(id, 52, 40, 100, 5),
+      maxWindResistance: range(id, 53, 8, 15),
+      storageTemperature: pick(id, 54, STORAGE_TEMP),
+      foldable: bool(id, 55, 0.8),
+      remoteControllerType: pick(id, 56, RC_TYPES),
     };
     return spec;
   }
-  // Accessories (batteries, propellers, cases, filters, memory cards, etc.)
+  // Accessories
   const accSpec: AccessorySpecs = {
     ...base,
-    weight: 120,
-    dimensions: "120×80×20 мм",
-    compatibleModels: ["DJI Mini", "DJI Air", "DJI Mavic"],
-    material: "Композит / алюминий",
+    weight: range(id, 60, 20, 600, 5),
+    dimensions: `${range(id, 61, 40, 200, 5)}×${range(id, 62, 30, 160, 5)}×${range(id, 63, 5, 80, 5)} мм`,
+    compatibleModels: pick(id, 64, ACC_COMPAT_POOL),
+    material: pick(id, 65, MATERIALS),
   };
   if (cat.includes("аккумулят") || cat.includes("батаре")) {
-    accSpec.batteryCapacity = 2400;
-    accSpec.chargingTime = 70;
+    accSpec.batteryCapacity = range(id, 66, 1800, 5500, 50);
+    accSpec.chargingTime = range(id, 67, 40, 110, 5);
   }
   return accSpec;
 }

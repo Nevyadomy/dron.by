@@ -1,34 +1,8 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-} from "react";
-import type { ReactNode } from "react";
-import {
-  cartReducer,
-  initialCart,
-  type CartItem,
-  type CartState,
-} from "@/store/cartReducer";
+import { useEffect, useMemo, useReducer, useRef, type ReactNode } from "react";
+import { cartReducer, initialCart, type CartState } from "@/store/cartReducer";
+import { CartContext, type CartContextValue } from "./cart-context";
 
 const STORAGE_KEY = "cart_state";
-
-interface CartContextValue {
-  state: CartState;
-  totalCount: number;
-  totalPrice: number;
-  add: (item: Omit<CartItem, "quantity">, quantity?: number) => void;
-  remove: (id: number) => void;
-  increment: (id: number) => void;
-  decrement: (id: number) => void;
-  setQuantity: (id: number, quantity: number) => void;
-  clear: () => void;
-}
-
-const CartContext = createContext<CartContextValue | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, initialCart);
@@ -76,10 +50,4 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [state]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
-}
-
-export function useCart() {
-  const ctx = useContext(CartContext);
-  if (!ctx) throw new Error("useCart must be used within CartProvider");
-  return ctx;
 }

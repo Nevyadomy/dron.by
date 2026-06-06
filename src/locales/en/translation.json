@@ -16,7 +16,18 @@
     "login": "Sign in",
     "logout": "Sign out",
     "menu": "Menu",
-    "theme": "Toggle theme"
+    "theme": "Toggle theme",
+    "compare": "Compare",
+    "logoAria": "DRON.BY — to home",
+    "closeMenu": "Close menu",
+    "close": "Close",
+    "themeLight": "light",
+    "themeDark": "dark",
+    "themeLabel": "Theme",
+    "suggestCatsBrands": "Categories & brands",
+    "suggestProducts": "Products",
+    "suggestEmpty": "Nothing found",
+    "suggestAll": "All results for \"{{q}}\""
   },
   "footer": {
     "subscribe": "Subscribe",
@@ -32,7 +43,17 @@
     "news": "News",
     "promotions": "Deals & discounts",
     "catalog": "Drone catalog",
-    "about": "About us"
+    "about": "About us",
+    "compare": "Compare",
+    "delivery": "Delivery",
+    "payment": "Payment",
+    "offer": "Public offer",
+    "returnsPolicy": "Return policy",
+    "marketplaceRules": "Marketplace terms of use",
+    "privacyPolicy": "Privacy policy",
+    "termsOfUse": "Terms of use",
+    "docComing": "Document will be available soon",
+    "copyright": "Copyright © 2026 | \"DRON.BY\" — quadcopter and accessory shop"
   },
   "common": {
     "buy": "Buy",
@@ -47,5 +68,36 @@
     "confirm": "Confirm",
     "back": "Back"
   },
-  "breadcrumbs": { "home": "Home" }
+  "breadcrumbs": { "home": "Home" },
+  "spec": {
+    "title": "Specifications",
+    "manufacturer": "Manufacturer",
+    "model": "Model",
+    "releaseYear": "Release year",
+    "weight": "Weight",
+    "dimensions": "Dimensions",
+    "colorOptions": "Colors",
+    "warrantyMonths": "Warranty",
+    "flightTime": "Flight time",
+    "maxSpeed": "Max speed",
+    "maxFlightDistance": "Max distance",
+    "maxTransmissionRange": "Transmission range",
+    "cameraResolution": "Camera resolution",
+    "sensorType": "Sensor type",
+    "gimbal": "Gimbal",
+    "obstacleAvoidance": "Obstacle avoidance",
+    "gps": "GPS",
+    "returnToHome": "Return to home",
+    "batteryCapacity": "Battery",
+    "chargingTime": "Charging time",
+    "maxWindResistance": "Wind resistance",
+    "storageTemperature": "Storage temperature",
+    "foldable": "Foldable",
+    "remoteControllerType": "Remote controller",
+    "fpvGogglesIncluded": "FPV goggles included",
+    "fpvProtocol": "FPV protocol",
+    "maxVideoLatency": "Video latency",
+    "compatibleModels": "Compatibility",
+    "material": "Material"
+  }
 }

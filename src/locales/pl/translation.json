@@ -16,7 +16,18 @@
     "login": "Zaloguj",
     "logout": "Wyloguj",
     "menu": "Menu",
-    "theme": "Zmień motyw"
+    "theme": "Zmień motyw",
+    "compare": "Porównanie",
+    "logoAria": "DRON.BY — na stronę główną",
+    "closeMenu": "Zamknij menu",
+    "close": "Zamknij",
+    "themeLight": "jasny",
+    "themeDark": "ciemny",
+    "themeLabel": "Motyw",
+    "suggestCatsBrands": "Kategorie i marki",
+    "suggestProducts": "Produkty",
+    "suggestEmpty": "Nic nie znaleziono",
+    "suggestAll": "Wszystkie wyniki dla „{{q}}”"
   },
   "footer": {
     "subscribe": "Zapisz się",
@@ -32,7 +43,17 @@
     "news": "Aktualności",
     "promotions": "Promocje i rabaty",
     "catalog": "Katalog dronów",
-    "about": "O nas"
+    "about": "O nas",
+    "compare": "Porównanie",
+    "delivery": "Dostawa",
+    "payment": "Płatność",
+    "offer": "Oferta publiczna",
+    "returnsPolicy": "Polityka zwrotów",
+    "marketplaceRules": "Regulamin platformy handlowej",
+    "privacyPolicy": "Polityka prywatności",
+    "termsOfUse": "Warunki użytkowania",
+    "docComing": "Dokument będzie wkrótce dostępny",
+    "copyright": "Copyright © 2026 | „DRON.BY” — sklep z quadrokopterami i akcesoriami"
   },
   "common": {
     "buy": "Kup",
@@ -47,5 +68,21 @@
     "confirm": "Potwierdź",
     "back": "Wstecz"
   },
-  "breadcrumbs": { "home": "Strona główna" }
+  "breadcrumbs": { "home": "Strona główna" },
+  "spec": {
+    "title": "Specyfikacja",
+    "manufacturer": "Producent",
+    "model": "Model",
+    "releaseYear": "Rok produkcji",
+    "weight": "Waga",
+    "dimensions": "Wymiary",
+    "warrantyMonths": "Gwarancja",
+    "flightTime": "Czas lotu",
+    "maxSpeed": "Maks. prędkość",
+    "maxFlightDistance": "Zasięg lotu",
+    "cameraResolution": "Rozdzielczość kamery",
+    "batteryCapacity": "Akumulator",
+    "gps": "GPS",
+    "foldable": "Składany"
+  }
 }

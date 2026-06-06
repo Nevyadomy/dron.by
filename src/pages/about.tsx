@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import useEmblaCarousel from "embla-carousel-react";
-import CountUp from "react-countup";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Breadcrumbs } from "@/components/molecules/Breadcrumbs";
+import { Lightbox } from "@/components/organisms/Lightbox";
 import { useReveal } from "@/hooks/useReveal";
 import { cn } from "@/utils/cn";
 import heroImg from "@/assets/images/about/hero.jpg";
@@ -67,6 +67,23 @@ const Reveal = ({
   );
 };
 
+function useCountUp(target: number, active: boolean, duration = 2000) {
+  const [val, setVal] = useState(0);
+  useEffect(() => {
+    if (!active) return;
+    let raf = 0;
+    const start = performance.now();
+    const tick = (t: number) => {
+      const p = Math.min(1, (t - start) / duration);
+      setVal(Math.round(target * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, active, duration]);
+  return val;
+}
+
 const Stat = ({
   value,
   suffix,
@@ -77,13 +94,14 @@ const Stat = ({
   label: string;
 }) => {
   const { ref, visible } = useReveal<HTMLDivElement>(0.4);
+  const n = useCountUp(value, visible);
   return (
     <div
       ref={ref}
       className={cn(s.statCard, s.reveal, visible && s.revealVisible)}
     >
       <div className={s.statNum}>
-        {visible ? <CountUp end={value} duration={2} separator=" " /> : 0}
+        {n.toLocaleString("ru-RU")}
         {suffix}
       </div>
       <div className={s.statLabel}>{label}</div>
@@ -92,11 +110,11 @@ const Stat = ({
 };
 
 const AboutPage = () => {
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    loop: false,
-    align: "start",
-  });
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" });
   const [selected, setSelected] = useState(0);
+  const [lightbox, setLightbox] = useState<string | null>(null);
+  const pausedRef = useRef(false);
+  const intervalRef = useRef<number | null>(null);
 
   useEffect(() => {
     document.title = "О нас | DRON.BY — интернет-магазин дронов";
@@ -120,17 +138,51 @@ const AboutPage = () => {
     };
   }, [emblaApi]);
 
+  // Auto-rotate gallery. Pauses on hover/touch/lightbox.
+  useEffect(() => {
+    if (!emblaApi) return;
+    const tick = () => {
+      if (!pausedRef.current && !lightbox) emblaApi.scrollNext();
+    };
+    intervalRef.current = window.setInterval(tick, 3500);
+    return () => {
+      if (intervalRef.current) window.clearInterval(intervalRef.current);
+    };
+  }, [emblaApi, lightbox]);
+  const pause = useCallback(() => {
+    pausedRef.current = true;
+  }, []);
+  const resume = useCallback(() => {
+    pausedRef.current = false;
+  }, []);
+
   const scrollTo = useCallback(
     (i: number) => emblaApi?.scrollTo(i),
     [emblaApi],
   );
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
   return (
-    <div>
-      <section
-        className={s.hero}
-        style={{ ["--hero-bg" as string]: `url(${heroImg})` }}
+    <div
+      className={s.pageWrap}
+      style={{ ["--page-bg" as string]: `url(${heroImg})` }}
+    >
+      <div className={s.fixedBg} aria-hidden />
+      <div
+        className="page-container"
+        style={{
+          paddingTop: 16,
+          paddingBottom: 0,
+          position: "relative",
+          zIndex: 1,
+        }}
       >
+        <Breadcrumbs
+          items={[{ label: "Главная", to: "/" }, { label: "О нас" }]}
+        />
+      </div>
+      <section className={s.hero}>
         <div className={s.heroContent}>
           <h1 className={s.heroSlogan}>Дроны без компромиссов</h1>
           <p className={s.heroText}>
@@ -143,12 +195,6 @@ const AboutPage = () => {
           </Link>
         </div>
       </section>
-
-      <div className="page-container" style={{ paddingTop: 16 }}>
-        <Breadcrumbs
-          items={[{ label: "Главная", to: "/" }, { label: "О нас" }]}
-        />
-      </div>
 
       <section className={s.section}>
         <h2 className={s.sectionTitle}>Наша история</h2>
@@ -169,7 +215,7 @@ const AboutPage = () => {
 
       <section className={s.section}>
         <h2 className={s.sectionTitle}>Технологии и партнёры</h2>
-        <div className={s.marquee}>
+        <div className={cn(s.marquee, s.marqueeStatic)}>
           <div className={s.marqueeTrack}>
             {[...BRANDS, ...BRANDS, ...BRANDS, ...BRANDS].map((b, i) => (
               <span key={`${b}-${i}`} className={s.brand}>
@@ -191,15 +237,48 @@ const AboutPage = () => {
 
       <section className={s.section}>
         <h2 className={s.sectionTitle}>Полёты наших пилотов</h2>
-        <div className={s.galleryWrap} ref={emblaRef}>
-          <div className={s.gallery}>
-            {GALLERY.map((src, i) => (
-              <div key={src + i} className={s.galleryItem}>
-                <img src={src} alt={`Aerial photo ${i + 1}`} loading="lazy" />
-                <span className={s.overlay}>Смотреть</span>
-              </div>
-            ))}
+        <div
+          className={s.galleryShell}
+          onMouseEnter={pause}
+          onMouseLeave={resume}
+          onTouchStart={pause}
+          onTouchEnd={resume}
+        >
+          <button
+            type="button"
+            className={cn(s.galleryNav, s.galleryNavPrev)}
+            onClick={scrollPrev}
+            aria-label="Предыдущее"
+            title="Предыдущее фото"
+          >
+            <ChevronLeft size={22} />
+          </button>
+          <div className={s.galleryWrap} ref={emblaRef}>
+            <div className={s.gallery}>
+              {GALLERY.map((src, i) => (
+                <button
+                  key={src + i}
+                  type="button"
+                  className={s.galleryItem}
+                  onClick={() => setLightbox(src)}
+                  aria-label={`Открыть фото ${i + 1}`}
+                  title="Открыть фото"
+                >
+                  <img src={src} alt={`Aerial photo ${i + 1}`} loading="lazy" />
+                  <span className={s.overlay}>Смотреть</span>
+                </button>
+              ))}
+            </div>
           </div>
+          <button
+            type="button"
+            className={cn(s.galleryNav, s.galleryNavNext)}
+            onClick={scrollNext}
+            aria-label="Следующее"
+            title="Следующее фото"
+          >
+            <ChevronRight size={22} />
+          </button>
         </div>
         <div className={s.dots}>
           {GALLERY.map((_, i) => (
@@ -213,6 +292,10 @@ const AboutPage = () => {
           ))}
         </div>
       </section>
+
+      {lightbox && (
+        <Lightbox src={lightbox} onClose={() => setLightbox(null)} />
+      )}
     </div>
   );
 };

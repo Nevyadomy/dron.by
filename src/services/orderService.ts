@@ -12,7 +12,11 @@ export interface OrderPayload {
   name: string;
   email: string;
   phone?: string;
+  delivery: "pickup" | "courier";
   address?: string;
+  pickupAddress?: string;
+  payment: "card" | "cash";
+  cardLast4?: string;
   comment?: string;
   items: OrderItemLine[];
   total: number;
@@ -34,7 +38,8 @@ export async function submitOrder(p: OrderPayload): Promise<void> {
     `Покупатель: ${p.name}\n` +
     `Email: ${p.email}\n` +
     (p.phone ? `Телефон: ${p.phone}\n` : "") +
-    (p.address ? `Адрес: ${p.address}\n` : "") +
+    `Доставка: ${p.delivery === "pickup" ? `Самовывоз (${p.pickupAddress ?? ""})` : `Курьер — ${p.address ?? ""}`}\n` +
+    `Оплата: ${p.payment === "card" ? `Карта${p.cardLast4 ? " ****" + p.cardLast4 : ""}` : "При получении"}\n` +
     (p.comment ? `\nКомментарий:\n${p.comment}\n` : "") +
     `\nЗаказ:\n${itemsList}\n\nИтого: ${p.total.toFixed(2)} BYN`;
 

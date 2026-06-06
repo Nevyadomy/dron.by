@@ -1,11 +1,5 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useReducer,
-  useRef,
-} from "react";
-import type { ReactNode } from "react";
+import { useEffect, useReducer, useRef, type ReactNode } from "react";
+import { FavoritesContext } from "./Favorites-context";
 
 interface FavoritesState {
   ids: number[];
@@ -36,19 +30,6 @@ function reducer(state: FavoritesState, action: Action): FavoritesState {
       return state;
   }
 }
-
-interface FavoritesContextValue {
-  ids: number[];
-  count: number;
-  isFavorite: (id: number) => boolean;
-  toggle: (id: number) => void;
-  remove: (id: number) => void;
-  clear: () => void;
-}
-
-const FavoritesContext = createContext<FavoritesContextValue | undefined>(
-  undefined,
-);
 
 export function FavoritesProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, initial);
@@ -87,11 +68,4 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
       {children}
     </FavoritesContext.Provider>
   );
-}
-
-export function useFavorites() {
-  const ctx = useContext(FavoritesContext);
-  if (!ctx)
-    throw new Error("useFavorites must be used within FavoritesProvider");
-  return ctx;
 }

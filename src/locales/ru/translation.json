@@ -16,7 +16,18 @@
     "login": "Войти",
     "logout": "Выйти",
     "menu": "Меню",
-    "theme": "Переключить тему"
+    "theme": "Переключить тему",
+    "compare": "Сравнение",
+    "logoAria": "DRON.BY — на главную",
+    "closeMenu": "Закрыть меню",
+    "close": "Закрыть",
+    "themeLight": "светлая",
+    "themeDark": "тёмная",
+    "themeLabel": "Тема",
+    "suggestCatsBrands": "Категории и бренды",
+    "suggestProducts": "Товары",
+    "suggestEmpty": "Ничего не найдено",
+    "suggestAll": "Все результаты по «{{q}}»"
   },
   "footer": {
     "subscribe": "Подписаться",
@@ -32,7 +43,17 @@
     "news": "Новости",
     "promotions": "Акции и скидки",
     "catalog": "Каталог дронов",
-    "about": "О нас"
+    "about": "О нас",
+    "compare": "Сравнение",
+    "delivery": "Доставка",
+    "payment": "Оплата",
+    "offer": "Публичная оферта",
+    "returnsPolicy": "Политика возврата товара",
+    "marketplaceRules": "Правила пользования торговой площадкой",
+    "privacyPolicy": "Политика конфиденциальности",
+    "termsOfUse": "Пользовательское соглашение",
+    "docComing": "Документ скоро будет доступен",
+    "copyright": "Copyright © 2026 | \"DRON.BY\" — магазин квадрокоптеров и аксессуаров"
   },
   "common": {
     "buy": "Купить",
@@ -47,5 +68,36 @@
     "confirm": "Подтвердить",
     "back": "Назад"
   },
-  "breadcrumbs": { "home": "Главная" }
+  "breadcrumbs": { "home": "Главная" },
+  "spec": {
+    "title": "Характеристики",
+    "manufacturer": "Производитель",
+    "model": "Модель",
+    "releaseYear": "Год выпуска",
+    "weight": "Вес",
+    "dimensions": "Габариты",
+    "colorOptions": "Цвета",
+    "warrantyMonths": "Гарантия",
+    "flightTime": "Время полёта",
+    "maxSpeed": "Макс. скорость",
+    "maxFlightDistance": "Дальность полёта",
+    "maxTransmissionRange": "Передача сигнала",
+    "cameraResolution": "Разрешение камеры",
+    "sensorType": "Тип сенсора",
+    "gimbal": "Подвес",
+    "obstacleAvoidance": "Обход препятствий",
+    "gps": "GPS",
+    "returnToHome": "Возврат домой",
+    "batteryCapacity": "Аккумулятор",
+    "chargingTime": "Время зарядки",
+    "maxWindResistance": "Ветроустойчивость",
+    "storageTemperature": "Температура хранения",
+    "foldable": "Складной",
+    "remoteControllerType": "Пульт управления",
+    "fpvGogglesIncluded": "FPV-очки в комплекте",
+    "fpvProtocol": "FPV-протокол",
+    "maxVideoLatency": "Задержка видео",
+    "compatibleModels": "Совместимость",
+    "material": "Материал"
+  }
 }

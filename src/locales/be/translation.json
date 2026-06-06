@@ -16,7 +16,18 @@
     "login": "Увайсці",
     "logout": "Выйсці",
     "menu": "Меню",
-    "theme": "Пераключыць тэму"
+    "theme": "Пераключыць тэму",
+    "compare": "Параўнанне",
+    "logoAria": "DRON.BY — на галоўную",
+    "closeMenu": "Закрыць меню",
+    "close": "Закрыць",
+    "themeLight": "светлая",
+    "themeDark": "цёмная",
+    "themeLabel": "Тэма",
+    "suggestCatsBrands": "Катэгорыі і брэнды",
+    "suggestProducts": "Тавары",
+    "suggestEmpty": "Нічога не знойдзена",
+    "suggestAll": "Усе вынікі па «{{q}}»"
   },
   "footer": {
     "subscribe": "Падпісацца",
@@ -32,7 +43,17 @@
     "news": "Навіны",
     "promotions": "Акцыі і зніжкі",
     "catalog": "Каталог дронаў",
-    "about": "Пра нас"
+    "about": "Пра нас",
+    "compare": "Параўнанне",
+    "delivery": "Дастаўка",
+    "payment": "Аплата",
+    "offer": "Публічная аферта",
+    "returnsPolicy": "Палітыка вяртання тавару",
+    "marketplaceRules": "Правілы карыстання гандлёвай пляцоўкай",
+    "privacyPolicy": "Палітыка канфідэнцыяльнасці",
+    "termsOfUse": "Карыстальніцкае пагадненне",
+    "docComing": "Дакумент хутка будзе даступны",
+    "copyright": "Copyright © 2026 | \"DRON.BY\" — крама квадракоптараў і аксэсуараў"
   },
   "common": {
     "buy": "Купіць",
@@ -47,5 +68,21 @@
     "confirm": "Пацвердзіць",
     "back": "Назад"
   },
-  "breadcrumbs": { "home": "Галоўная" }
+  "breadcrumbs": { "home": "Галоўная" },
+  "spec": {
+    "title": "Характарыстыкі",
+    "manufacturer": "Вытворца",
+    "model": "Мадэль",
+    "releaseYear": "Год выпуску",
+    "weight": "Вага",
+    "dimensions": "Габарыты",
+    "warrantyMonths": "Гарантыя",
+    "flightTime": "Час палёту",
+    "maxSpeed": "Макс. хуткасць",
+    "maxFlightDistance": "Дальнасць палёту",
+    "cameraResolution": "Разрашэнне камеры",
+    "batteryCapacity": "Акумулятар",
+    "gps": "GPS",
+    "foldable": "Складны"
+  }
 }

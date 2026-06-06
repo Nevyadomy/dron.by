@@ -3,11 +3,11 @@ import {
   Heart,
   Menu,
   Moon,
+  Scale,
   Search,
   ShoppingCart,
   Sun,
   User,
-  LogOut,
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
@@ -17,8 +17,9 @@ import { Input } from "@/components/atoms/Input";
 import { Badge } from "@/components/atoms/Badge";
 import { LanguageSwitcher } from "@/components/atoms/LanguageSwitcher";
 import { useAuth } from "@/contexts/useAuth";
-import { useCart } from "@/contexts/CartContext";
-import { useFavorites } from "@/contexts/FavoritesContext";
+import { useCart } from "@/contexts/useCart";
+import { useFavorites } from "@/contexts/useFavorites";
+import { useComparison } from "@/contexts/useComparison";
 import { useTheme } from "@/hooks/useTheme";
 import { LOCAL_PRODUCTS, searchLocal } from "@/data/products";
 import { cn } from "@/utils/cn";
@@ -27,11 +28,11 @@ import styles from "./Header.module.css";
 
 const NAV_KEYS: { key: string; to: string }[] = [
   { key: "home", to: "/" },
+  { key: "about", to: "/about" },
   { key: "catalog", to: "/catalog" },
   { key: "promotions", to: "/promotions" },
   { key: "news", to: "/news" },
   { key: "contacts", to: "/contacts" },
-  { key: "about", to: "/about" },
 ];
 
 export interface HeaderProps {
@@ -46,8 +47,9 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
     label: t(`nav.${n.key}`),
   }));
   const { count: favCount } = useFavorites();
+  const { count: compareCount } = useComparison();
   const { totalCount: cartCount } = useCart();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [localQuery, setLocalQuery] = useState(searchQuery);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -121,12 +123,12 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
     navigate(to);
   };
 
-  const hasBurgerNotice = favCount > 0 || cartCount > 0;
+  const hasBurgerNotice = favCount > 0 || cartCount > 0 || compareCount > 0;
 
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
-        <Link to="/" className={styles.logo} aria-label="DRON.BY — на главную">
+        <Link to="/" className={styles.logo} aria-label={t("header.logoAria")}>
           <img src={logoImg} alt="DRON.BY" width={140} height={48} />
         </Link>
 
@@ -161,7 +163,9 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
               {(suggestions.categories.length > 0 ||
                 suggestions.brands.length > 0) && (
                 <div className={styles.suggestSection}>
-                  <div className={styles.suggestLabel}>Категории и бренды</div>
+                  <div className={styles.suggestLabel}>
+                    {t("header.suggestCatsBrands")}
+                  </div>
                   <div className={styles.chips}>
                     {suggestions.categories.map((c) => (
                       <button
@@ -188,7 +192,9 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
               )}
               {suggestions.products.length > 0 && (
                 <div className={styles.suggestSection}>
-                  <div className={styles.suggestLabel}>Товары</div>
+                  <div className={styles.suggestLabel}>
+                    {t("header.suggestProducts")}
+                  </div>
                   <ul className={styles.suggestList}>
                     {suggestions.products.map((p) => (
                       <li key={p.id}>
@@ -227,14 +233,16 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
               {suggestions.products.length === 0 &&
                 suggestions.categories.length === 0 &&
                 suggestions.brands.length === 0 && (
-                  <div className={styles.suggestEmpty}>Ничего не найдено</div>
+                  <div className={styles.suggestEmpty}>
+                    {t("header.suggestEmpty")}
+                  </div>
                 )}
               <button
                 type="button"
                 className={styles.suggestAll}
                 onClick={() => goSearch(localQuery)}
               >
-                Все результаты по «{trimmed}»
+                {t("header.suggestAll", { q: trimmed })}
                 <ArrowRight size={14} />
               </button>
             </div>
@@ -242,6 +250,20 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
         </form>
 
         <div className={styles.mobileTools}>
+          {isAuthenticated && (user?.avatar || user?.picture) ? (
+            <Link
+              to="/profile"
+              className={styles.iconBtn}
+              aria-label={t("header.profile")}
+              title={t("header.profile")}
+            >
+              <img
+                src={user.avatar || user.picture}
+                alt=""
+                className={styles.userAvatar}
+              />
+            </Link>
+          ) : null}
           <button
             type="button"
             className={styles.iconBtn}
@@ -251,16 +273,18 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
           >
             <Search size={20} />
           </button>
-          <Link
-            to={isAuthenticated ? "/profile" : "/login"}
-            className={styles.iconBtn}
-            aria-label={
-              isAuthenticated ? t("header.profile") : t("header.login")
-            }
-            title={isAuthenticated ? t("header.profile") : t("header.login")}
-          >
-            <User size={20} />
-          </Link>
+          {!(isAuthenticated && (user?.avatar || user?.picture)) && (
+            <Link
+              to={isAuthenticated ? "/profile" : "/login"}
+              className={styles.iconBtn}
+              aria-label={
+                isAuthenticated ? t("header.profile") : t("header.login")
+              }
+              title={isAuthenticated ? t("header.profile") : t("header.login")}
+            >
+              <User size={20} />
+            </Link>
+          )}
         </div>
 
         <div className={styles.actions}>
@@ -278,6 +302,16 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
               <Sun key="sun" size={20} />
             )}
           </button>
+
+          <Link
+            to="/compare"
+            className={styles.iconBtn}
+            aria-label={t("header.compare", { defaultValue: "Сравнение" })}
+            title={t("header.compare", { defaultValue: "Сравнение" })}
+          >
+            <Scale size={20} />
+            {compareCount > 0 && <Badge floating>{compareCount}</Badge>}
+          </Link>
 
           <Link
             to="/favorites"
@@ -378,8 +412,8 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
                 type="button"
                 className={styles.mobileClose}
                 onClick={closeMenu}
-                aria-label="Закрыть меню"
-                title="Закрыть"
+                aria-label={t("header.closeMenu")}
+                title={t("header.close")}
               >
                 <X size={24} />
               </button>
@@ -405,6 +439,15 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
                 ))}
               </ul>
               <div className={styles.mobileSection}>
+                <div
+                  style={{
+                    padding: "8px 0",
+                    display: "flex",
+                    justifyContent: "flex-start",
+                  }}
+                >
+                  <LanguageSwitcher />
+                </div>
                 <button
                   type="button"
                   className={styles.mobileAction}
@@ -413,7 +456,23 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
                   }}
                 >
                   {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
-                  <span>Тема: {theme === "light" ? "светлая" : "тёмная"}</span>
+                  <span>
+                    {t("header.themeLabel")}:{" "}
+                    {theme === "light"
+                      ? t("header.themeLight")
+                      : t("header.themeDark")}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  className={styles.mobileAction}
+                  onClick={() => goAndClose("/compare")}
+                >
+                  <Scale size={20} />
+                  <span>{t("header.compare")}</span>
+                  {compareCount > 0 && (
+                    <span className={styles.badge}>{compareCount}</span>
+                  )}
                 </button>
                 <button
                   type="button"
@@ -421,7 +480,7 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
                   onClick={() => goAndClose("/favorites")}
                 >
                   <Heart size={20} />
-                  <span>Избранное</span>
+                  <span>{t("header.favorites")}</span>
                   {favCount > 0 && (
                     <span className={styles.badge}>{favCount}</span>
                   )}
@@ -432,7 +491,7 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
                   onClick={() => goAndClose("/cart")}
                 >
                   <ShoppingCart size={20} />
-                  <span>Корзина</span>
+                  <span>{t("header.cart")}</span>
                   {cartCount > 0 && (
                     <span className={styles.badge}>{cartCount}</span>
                   )}
@@ -442,25 +501,21 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
                     type="button"
                     className={styles.mobileAction}
                     onClick={() => {
-                      logout();
-                      goAndClose("/login");
+                      goAndClose("/profile");
                     }}
                   >
-                    <LogOut size={20} />
-                    <span>
-                      {t("header.logout")} ({user?.name || user?.email})
-                    </span>
+                    {user?.avatar || user?.picture ? (
+                      <img
+                        src={user.avatar || user.picture}
+                        alt=""
+                        className={styles.userAvatar}
+                      />
+                    ) : (
+                      <User size={20} />
+                    )}
+                    <span>{user?.name || user?.email}</span>
                   </button>
                 )}
-                <div
-                  style={{
-                    padding: "12px 0",
-                    display: "flex",
-                    justifyContent: "flex-start",
-                  }}
-                >
-                  <LanguageSwitcher />
-                </div>
               </div>
             </div>
           </div>

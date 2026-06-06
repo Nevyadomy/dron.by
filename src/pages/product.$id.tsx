@@ -1,13 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
-import { Check, ChevronLeft, Heart, ShoppingCart } from "lucide-react";
+import { Check, ChevronLeft, Heart, Scale, ShoppingCart } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { Button } from "@/components/atoms/Button";
 import { LayoutCard } from "@/components/atoms/LayoutCard";
 import { SmartImage } from "@/components/atoms/SmartImage";
 import { RatingValue } from "@/components/atoms/RatingValue";
-import { useCart } from "@/contexts/CartContext";
+import { ProductSpecsTable } from "@/components/molecules/ProductSpecsTable";
+import { ProductPageSkeleton } from "@/components/molecules/SkeletonCard";
+import { useCart } from "@/contexts/useCart";
 import { useCurrency } from "@/hooks/useCurrency";
-import { useFavorites } from "@/contexts/FavoritesContext";
+import { useFavorites } from "@/contexts/useFavorites";
+import { useComparison } from "@/contexts/useComparison";
+import { useToast } from "@/components/atoms/Toast";
 import { fetchProduct } from "@/services/productService";
 import dronePlaceholder from "@/assets/images/common/drone-placeholder.png";
 import { getProductPromo, applyDiscount } from "@/data/promotions";
@@ -23,18 +27,18 @@ const ProductPage = () => {
   const { isFavorite, toggle } = useFavorites();
   const { state, add, remove } = useCart();
   const { format } = useCurrency();
+  const {
+    isInComparison,
+    add: addCompare,
+    remove: removeCompare,
+    isFull,
+  } = useComparison();
+  const toast = useToast();
 
   if (isLoading)
     return (
-      <div
-        style={{
-          maxWidth: 1200,
-          margin: "0 auto",
-          padding: 40,
-          textAlign: "center",
-        }}
-      >
-        Загрузка…
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: 24 }}>
+        <ProductPageSkeleton />
       </div>
     );
   if (error || !data)
@@ -52,6 +56,7 @@ const ProductPage = () => {
     );
 
   const fav = isFavorite(data.id);
+  const inCompare = isInComparison(data.id);
   const image = data.thumbnail || dronePlaceholder;
   const promo = getProductPromo(data.id);
   const hasDiscount = !!(promo && promo.discount > 0);
@@ -195,6 +200,7 @@ const ProductPage = () => {
               variant="secondary"
               onClick={() => toggle(data.id)}
               style={{ color: fav ? "var(--color-primary)" : undefined }}
+              title={fav ? "Убрать из избранного" : "Добавить в избранное"}
             >
               <Heart
                 size={16}
@@ -203,9 +209,46 @@ const ProductPage = () => {
               />
               {fav ? "В избранном" : "В избранное"}
             </Button>
+            <Button
+              variant="secondary"
+              disabled={!inCompare && isFull}
+              onClick={() => {
+                if (inCompare) {
+                  removeCompare(data.id);
+                  return;
+                }
+                if (isFull) {
+                  toast.show({
+                    text: "Достигнут лимит сравнения (5 товаров).",
+                    variant: "warning",
+                    duration: 2500,
+                  });
+                  return;
+                }
+                const r = addCompare(data.id);
+                if (r === "added")
+                  toast.show({
+                    text: "Товар добавлен к сравнению.",
+                    actionTo: "/compare",
+                    actionLabel: "Перейти",
+                    duration: 2500,
+                  });
+                else if (r === "exists")
+                  toast.show({
+                    text: "Товар уже в списке сравнения.",
+                    duration: 2500,
+                  });
+              }}
+              style={{ color: inCompare ? "var(--color-primary)" : undefined }}
+              title={inCompare ? "Убрать из сравнения" : "Добавить к сравнению"}
+            >
+              <Scale size={16} />
+              {inCompare ? "В сравнении" : "Сравнить"}
+            </Button>
           </div>
         </div>
       </div>
+      <ProductSpecsTable spec={data.spec} />
     </div>
   );
 };

@@ -135,6 +135,8 @@
 @media (hover: hover) { .favCartBtn:hover { background: var(--color-accent); } }
 @media (hover: none)  { .favCartBtn:active { background: var(--color-accent); } }
 .favCartBtn:disabled { background: var(--color-muted); color: var(--color-muted-fg); cursor: not-allowed; }
+.favCartBtnActive { background: var(--color-success, #16a34a); color: #fff; }
+@media (hover: hover) { .favCartBtnActive:hover { background: var(--color-destructive); } }
 @media (max-width: 640px) {
   .favRow { grid-template-columns: 56px 1fr auto; }
   .favPrice { grid-column: 2; grid-row: 2; justify-self: start; }

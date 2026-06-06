@@ -39,6 +39,8 @@ function readStoredUser(): AuthUser | null {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  // Hydrate synchronously from localStorage during initialization to avoid
+  // a cascading render caused by setState inside useEffect.
   const [state, dispatch] = useReducer(
     reducer,
     undefined as unknown as AuthState,

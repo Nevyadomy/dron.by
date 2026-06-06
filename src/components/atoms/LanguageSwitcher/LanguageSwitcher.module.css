@@ -31,6 +31,9 @@
   animation: lsIn 0.12s ease-out;
 }
 @keyframes lsIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 768px) {
+  .menu { right: auto; left: 0; }
+}
 .item {
   background: none;
   border: none;

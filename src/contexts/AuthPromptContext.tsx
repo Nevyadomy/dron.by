@@ -1,12 +1,6 @@
-import { createContext, useCallback, useContext, useState } from "react";
-import type { ReactNode } from "react";
+import { useCallback, useState, type ReactNode } from "react";
 import { AuthRequiredModal } from "@/components/organisms/AuthRequiredModal";
-
-interface AuthPromptValue {
-  prompt: () => void;
-}
-
-const AuthPromptContext = createContext<AuthPromptValue | undefined>(undefined);
+import { AuthPromptContext } from "./auth-prompt-context";
 
 export function AuthPromptProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -17,11 +11,4 @@ export function AuthPromptProvider({ children }: { children: ReactNode }) {
       <AuthRequiredModal open={open} onClose={() => setOpen(false)} />
     </AuthPromptContext.Provider>
   );
-}
-
-export function useAuthPrompt() {
-  const ctx = useContext(AuthPromptContext);
-  if (!ctx)
-    throw new Error("useAuthPrompt must be used within AuthPromptProvider");
-  return ctx;
 }

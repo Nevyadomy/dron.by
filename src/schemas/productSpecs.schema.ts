@@ -40,12 +40,12 @@ export interface DroneSpecs extends CommonSpecs {
   maxWindResistance?: number;
   storageTemperature?: string;
   foldable?: boolean;
-  remoteControllerType?: "в комплекте" | "опционально" | "только смартфон";
+  remoteControllerType?: string;
 }
 
 export interface FpvSpecs extends DroneSpecs {
   fpvGogglesIncluded?: boolean;
-  fpvProtocol?: "DJI O3" | "HDZero" | "Analog" | "Walksnail" | "Caddx Vista";
+  fpvProtocol?: string;
   /** Milliseconds. */
   maxVideoLatency?: number;
 }
