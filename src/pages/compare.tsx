@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCart, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Breadcrumbs } from "@/components/molecules/Breadcrumbs";
 import { Button } from "@/components/atoms/Button";
 import { SmartImage } from "@/components/atoms/SmartImage";
@@ -14,37 +15,45 @@ import s from "./compare.module.css";
 
 const SPEC_FIELDS: {
   key: string;
-  label: string;
+  labelKey: string;
   bool?: boolean;
   unit?: string;
 }[] = [
-  { key: "brand", label: "Бренд" },
-  { key: "category", label: "Категория" },
-  { key: "price", label: "Цена", unit: "BYN" },
-  { key: "manufacturer", label: "Производитель" },
-  { key: "model", label: "Модель" },
-  { key: "releaseYear", label: "Год выпуска" },
-  { key: "weight", label: "Вес", unit: "г" },
-  { key: "dimensions", label: "Габариты" },
-  { key: "warrantyMonths", label: "Гарантия", unit: "мес." },
-  { key: "flightTime", label: "Время полёта", unit: "мин" },
-  { key: "maxSpeed", label: "Макс. скорость", unit: "км/ч" },
-  { key: "maxFlightDistance", label: "Дальность полёта", unit: "м" },
-  { key: "maxTransmissionRange", label: "Передача сигнала", unit: "м" },
-  { key: "cameraResolution", label: "Камера" },
-  { key: "sensorType", label: "Сенсор" },
-  { key: "gimbal", label: "Подвес", bool: true },
-  { key: "obstacleAvoidance", label: "Обход препятствий", bool: true },
-  { key: "gps", label: "GPS", bool: true },
-  { key: "returnToHome", label: "Возврат домой", bool: true },
-  { key: "batteryCapacity", label: "Аккумулятор", unit: "mAh" },
-  { key: "chargingTime", label: "Время зарядки", unit: "мин" },
-  { key: "maxWindResistance", label: "Ветроустойчивость", unit: "м/с" },
-  { key: "foldable", label: "Складной", bool: true },
-  { key: "fpvGogglesIncluded", label: "FPV-очки в комплекте", bool: true },
-  { key: "fpvProtocol", label: "FPV-протокол" },
-  { key: "maxVideoLatency", label: "Задержка видео", unit: "мс" },
-  { key: "material", label: "Материал" },
+  { key: "brand", labelKey: "spec.manufacturer" },
+  { key: "category", labelKey: "filter.category" },
+  { key: "price", labelKey: "filter.price", unit: "BYN" },
+  { key: "manufacturer", labelKey: "spec.manufacturer" },
+  { key: "model", labelKey: "spec.model" },
+  { key: "releaseYear", labelKey: "spec.releaseYear" },
+  { key: "weight", labelKey: "spec.weight", unit: "г" },
+  { key: "dimensions", labelKey: "spec.dimensions" },
+  { key: "warrantyMonths", labelKey: "spec.warrantyMonths", unit: "мес." },
+  { key: "flightTime", labelKey: "spec.flightTime", unit: "мин" },
+  { key: "maxSpeed", labelKey: "spec.maxSpeed", unit: "км/ч" },
+  { key: "maxFlightDistance", labelKey: "spec.maxFlightDistance", unit: "м" },
+  {
+    key: "maxTransmissionRange",
+    labelKey: "spec.maxTransmissionRange",
+    unit: "м",
+  },
+  { key: "cameraResolution", labelKey: "spec.cameraResolution" },
+  { key: "sensorType", labelKey: "spec.sensorType" },
+  { key: "gimbal", labelKey: "spec.gimbal", bool: true },
+  { key: "obstacleAvoidance", labelKey: "spec.obstacleAvoidance", bool: true },
+  { key: "gps", labelKey: "spec.gps", bool: true },
+  { key: "returnToHome", labelKey: "spec.returnToHome", bool: true },
+  { key: "batteryCapacity", labelKey: "spec.batteryCapacity", unit: "mAh" },
+  { key: "chargingTime", labelKey: "spec.chargingTime", unit: "мин" },
+  { key: "maxWindResistance", labelKey: "spec.maxWindResistance", unit: "м/с" },
+  { key: "foldable", labelKey: "spec.foldable", bool: true },
+  {
+    key: "fpvGogglesIncluded",
+    labelKey: "spec.fpvGogglesIncluded",
+    bool: true,
+  },
+  { key: "fpvProtocol", labelKey: "spec.fpvProtocol" },
+  { key: "maxVideoLatency", labelKey: "spec.maxVideoLatency", unit: "мс" },
+  { key: "material", labelKey: "spec.material" },
 ];
 
 function getVal(p: Record<string, unknown>, key: string): unknown {
@@ -64,6 +73,7 @@ function fmt(v: unknown, bool?: boolean, unit?: string): string {
 }
 
 const ComparePage = () => {
+  const { t } = useTranslation();
   const { ids, remove, clear } = useComparison();
   const { state, add } = useCart();
   const { format } = useCurrency();
@@ -103,16 +113,19 @@ const ComparePage = () => {
   if (products.length === 0) {
     return (
       <div className="page-container">
-        <h1 style={{ fontSize: 24, fontWeight: 700 }}>Сравнение</h1>
+        <h1 style={{ fontSize: 24, fontWeight: 700 }}>{t("compare.title")}</h1>
         <Breadcrumbs
-          items={[{ label: "Главная", to: "/" }, { label: "Сравнение" }]}
+          items={[
+            { label: t("breadcrumbs.home"), to: "/" },
+            { label: t("compare.title") },
+          ]}
         />
         <div className={s.empty}>
           <p style={{ color: "var(--color-muted-fg)", marginBottom: 16 }}>
-            Список сравнения пуст. Добавьте товары из каталога.
+            {t("compare.empty")}
           </p>
           <Link to="/catalog">
-            <Button>Перейти в каталог</Button>
+            <Button>{t("cart.goToCatalog")}</Button>
           </Link>
         </div>
       </div>
@@ -125,9 +138,12 @@ const ComparePage = () => {
 
   return (
     <div className="page-container">
-      <h1 style={{ fontSize: 24, fontWeight: 700 }}>Сравнение</h1>
+      <h1 style={{ fontSize: 24, fontWeight: 700 }}>{t("compare.title")}</h1>
       <Breadcrumbs
-        items={[{ label: "Главная", to: "/" }, { label: "Сравнение" }]}
+        items={[
+          { label: t("breadcrumbs.home"), to: "/" },
+          { label: t("compare.title") },
+        ]}
       />
 
       <div className={s.wrap}>
@@ -138,22 +154,21 @@ const ComparePage = () => {
               className={cn(onlyDiff && s.active)}
               onClick={() => setOnlyDiff(true)}
             >
-              Только различия
+              {t("compare.onlyDifferences")}
             </button>
             <button
               type="button"
               className={cn(!onlyDiff && s.active)}
               onClick={() => setOnlyDiff(false)}
             >
-              Все параметры
+              {t("compare.allParams")}
             </button>
           </div>
           <button type="button" className={s.clearBtn} onClick={clear}>
-            Очистить всё
+            {t("compare.clearAll")}
           </button>
         </div>
 
-        {/* Desktop table */}
         <div className={s.scroll}>
           <div className={s.table} style={{ gridTemplateColumns: undefined }}>
             <div className={s.headerRow} style={gridStyle}>
@@ -166,8 +181,8 @@ const ComparePage = () => {
                       type="button"
                       className={s.removeColBtn}
                       onClick={() => remove(p.id)}
-                      aria-label="Убрать из сравнения"
-                      title="Убрать"
+                      aria-label={t("compare.removeFromCompare")}
+                      title={t("compare.removeFromCompare")}
                     >
                       <X size={14} />
                     </button>
@@ -195,7 +210,7 @@ const ComparePage = () => {
                       }
                     >
                       <ShoppingCart size={14} />{" "}
-                      {inCart ? "В корзине" : "В корзину"}
+                      {inCart ? t("compare.inCart") : t("compare.addToCart")}
                     </Button>
                   </div>
                 );
@@ -203,7 +218,9 @@ const ComparePage = () => {
             </div>
             {visibleRows.map((r) => (
               <div key={r.field.key} className={s.row} style={gridStyle}>
-                <div className={cn(s.cell, s.labelCol)}>{r.field.label}</div>
+                <div className={cn(s.cell, s.labelCol)}>
+                  {t(r.field.labelKey)}
+                </div>
                 {r.values.map((v, i) => {
                   const isPrice = r.field.key === "price";
                   const display = isPrice
@@ -226,14 +243,13 @@ const ComparePage = () => {
                     justifyContent: "center",
                   }}
                 >
-                  Все характеристики совпадают.
+                  {t("compare.allSame")}
                 </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Mobile vertical list */}
         <div className={s.mobileList}>
           {products.map((p) => {
             const inCart = state.items.some((i) => i.id === p.id);
@@ -258,7 +274,7 @@ const ComparePage = () => {
                     className={s.removeColBtn}
                     style={{ position: "static" }}
                     onClick={() => remove(p.id)}
-                    aria-label="Убрать"
+                    aria-label={t("compare.removeFromCompare")}
                   >
                     <X size={14} />
                   </button>
@@ -274,7 +290,7 @@ const ComparePage = () => {
                       key={r.field.key}
                       className={cn(s.mobileSpec, r.differs && s.diff)}
                     >
-                      <span className="lbl">{r.field.label}</span>
+                      <span className="lbl">{t(r.field.labelKey)}</span>
                       <span>{display}</span>
                     </div>
                   );
@@ -294,7 +310,7 @@ const ComparePage = () => {
                     }
                   >
                     <ShoppingCart size={14} />{" "}
-                    {inCart ? "В корзине" : "В корзину"}
+                    {inCart ? t("compare.inCart") : t("compare.addToCart")}
                   </Button>
                 </div>
               </div>

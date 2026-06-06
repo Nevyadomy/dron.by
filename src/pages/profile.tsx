@@ -11,6 +11,7 @@ import {
   User,
   Wallet,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Breadcrumbs } from "@/components/molecules/Breadcrumbs";
 import { LayoutCard } from "@/components/atoms/LayoutCard";
 import { Button } from "@/components/atoms/Button";
@@ -28,61 +29,25 @@ import s from "./profile.module.css";
 
 type TabKey = "profile" | "orders" | "reviews" | "payments" | "favorites";
 
-const TABS: { key: TabKey; label: string; icon: React.ReactNode }[] = [
-  { key: "profile", label: "Личные данные", icon: <User size={18} /> },
-  { key: "orders", label: "Заказы", icon: <Package size={18} /> },
-  { key: "reviews", label: "Отзывы", icon: <MessageSquare size={18} /> },
-  { key: "payments", label: "Платежи", icon: <Wallet size={18} /> },
-  { key: "favorites", label: "Избранное", icon: <Heart size={18} /> },
+const TABS = (
+  t: (key: string) => string,
+): { key: TabKey; label: string; icon: React.ReactNode }[] => [
+  { key: "profile", label: t("profile.profile"), icon: <User size={18} /> },
+  { key: "orders", label: t("profile.orders"), icon: <Package size={18} /> },
+  {
+    key: "reviews",
+    label: t("profile.reviews"),
+    icon: <MessageSquare size={18} />,
+  },
+  { key: "payments", label: t("profile.payments"), icon: <Wallet size={18} /> },
+  {
+    key: "favorites",
+    label: t("profile.favorites"),
+    icon: <Heart size={18} />,
+  },
 ];
-
-interface SavedCard {
-  id: string;
-  last4: string;
-  exp: string; // MM/YY
-  holder: string;
-  brand: string;
-}
-
-function detectBrand(num: string): string {
-  const n = num.replace(/\s+/g, "");
-  if (/^4/.test(n)) return "Visa";
-  if (/^5[1-5]/.test(n)) return "MasterCard";
-  if (/^3[47]/.test(n)) return "Amex";
-  if (/^6/.test(n)) return "Maestro";
-  return "Card";
-}
-
-function formatNum(v: string) {
-  return v
-    .replace(/\D/g, "")
-    .slice(0, 19)
-    .replace(/(.{4})/g, "$1 ")
-    .trim();
-}
-function formatExp(v: string) {
-  const d = v.replace(/\D/g, "").slice(0, 4);
-  if (d.length < 3) return d;
-  return `${d.slice(0, 2)}/${d.slice(2)}`;
-}
-
-function loadCards(userId: string | number): SavedCard[] {
-  try {
-    const raw = localStorage.getItem(`payment_cards_${userId}`);
-    return raw ? (JSON.parse(raw) as SavedCard[]) : [];
-  } catch {
-    return [];
-  }
-}
-function saveCards(userId: string | number, cards: SavedCard[]) {
-  try {
-    localStorage.setItem(`payment_cards_${userId}`, JSON.stringify(cards));
-  } catch {
-    /* ignore */
-  }
-}
-
 const ProfilePage = () => {
+  const { t } = useTranslation();
   const { user, isAuthenticated, isHydrated, logout, updateUser } = useAuth();
   const { list, currency, setCurrency } = useCurrency();
   const [params, setParams] = useSearchParams();
@@ -91,7 +56,7 @@ const ProfilePage = () => {
   if (!user) return null;
 
   const tabParam = (params.get("tab") as TabKey) ?? "profile";
-  const tab: TabKey = TABS.some((t) => t.key === tabParam)
+  const tab: TabKey = TABS(t).some((t) => t.key === tabParam)
     ? tabParam
     : "profile";
   const setTab = (k: TabKey) => {
@@ -102,9 +67,12 @@ const ProfilePage = () => {
 
   return (
     <div className="page-container">
-      <h1 style={{ fontSize: 24, fontWeight: 700 }}>Личный кабинет</h1>
+      <h1 style={{ fontSize: 24, fontWeight: 700 }}>{t("profile.title")}</h1>
       <Breadcrumbs
-        items={[{ label: "Главная", to: "/" }, { label: "Личный кабинет" }]}
+        items={[
+          { label: t("breadcrumbs.home"), to: "/" },
+          { label: t("profile.title") },
+        ]}
       />
 
       <div className={s.wrap} style={{ marginTop: 16 }}>
@@ -122,13 +90,15 @@ const ProfilePage = () => {
               </span>
             )}
             <div>
-              <div className={s.userName}>{user.name || "Пользователь"}</div>
+              <div className={s.userName}>
+                {user.name || t("profile.defaultName")}
+              </div>
               <div className={s.userEmail}>{user.email}</div>
             </div>
           </div>
 
           <div className={s.tabs}>
-            {TABS.map((t) => (
+            {TABS(t).map((t) => (
               <button
                 key={t.key}
                 type="button"
@@ -145,7 +115,7 @@ const ProfilePage = () => {
               onClick={logout}
             >
               <LogOut size={18} />
-              <span>Выйти</span>
+              <span>{t("profile.logout")}</span>
             </button>
           </div>
         </LayoutCard>
@@ -155,15 +125,15 @@ const ProfilePage = () => {
           {tab === "orders" && (
             <EmptyState
               icon={<Package size={32} />}
-              title="У вас пока нет заказов"
-              text="Перейдите в каталог, чтобы сделать первый заказ."
+              title={t("profile.emptyOrders")}
+              text={t("profile.emptyOrdersHint")}
             />
           )}
           {tab === "reviews" && (
             <EmptyState
               icon={<MessageSquare size={32} />}
-              title="У вас пока нет отзывов"
-              text="Поделитесь впечатлениями о товарах после покупки."
+              title={t("profile.emptyReviews")}
+              text={t("profile.emptyReviewsHint")}
             />
           )}
           {tab === "payments" && (
@@ -181,7 +151,6 @@ const ProfilePage = () => {
     </div>
   );
 };
-
 const EmptyState = ({
   icon,
   title,
@@ -190,33 +159,37 @@ const EmptyState = ({
   icon: React.ReactNode;
   title: string;
   text: string;
-}) => (
-  <div className={s.emptyBox}>
-    <div style={{ color: "var(--color-muted-fg)", marginBottom: 12 }}>
-      {icon}
+}) => {
+  const { t } = useTranslation();
+  return (
+    <div className={s.emptyBox}>
+      <div style={{ color: "var(--color-muted-fg)", marginBottom: 12 }}>
+        {icon}
+      </div>
+      <h2
+        style={{
+          fontSize: 18,
+          fontWeight: 600,
+          color: "var(--color-fg)",
+          marginBottom: 8,
+        }}
+      >
+        {title}
+      </h2>
+      <p>{text}</p>
+      <div style={{ marginTop: 16 }}>
+        <Link to="/catalog">
+          <Button>
+            <ShoppingBag size={16} /> {t("cart.goToCatalog")}
+          </Button>
+        </Link>
+      </div>
     </div>
-    <h2
-      style={{
-        fontSize: 18,
-        fontWeight: 600,
-        color: "var(--color-fg)",
-        marginBottom: 8,
-      }}
-    >
-      {title}
-    </h2>
-    <p>{text}</p>
-    <div style={{ marginTop: 16 }}>
-      <Link to="/catalog">
-        <Button>
-          <ShoppingBag size={16} /> Перейти в каталог
-        </Button>
-      </Link>
-    </div>
-  </div>
-);
+  );
+};
 
 const ProfileForm = () => {
+  const { t } = useTranslation();
   const { user, updateUser } = useAuth();
   const fileRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState(user?.name ?? "");
@@ -230,7 +203,7 @@ const ProfileForm = () => {
     const f = e.target.files?.[0];
     if (!f) return;
     if (f.size > 10 * 1024 * 1024) {
-      alert("Файл слишком большой. Максимум 10 МБ.");
+      alert(t("profile.fileTooBig"));
       return;
     }
     const reader = new FileReader();
@@ -250,7 +223,7 @@ const ProfileForm = () => {
 
   return (
     <form onSubmit={onSubmit}>
-      <h2 className={s.h1}>Личные данные</h2>
+      <h2 className={s.h1}>{t("profile.profile")}</h2>
       <div className={s.avatarRow}>
         {avatar ? (
           <img src={avatar} alt="avatar" className={s.avatarLg} />
@@ -265,7 +238,7 @@ const ProfileForm = () => {
             className={s.uploadBtn}
             onClick={() => fileRef.current?.click()}
           >
-            Загрузить фото
+            {t("profile.uploadPhoto")}
           </button>
           <input
             ref={fileRef}
@@ -282,7 +255,7 @@ const ProfileForm = () => {
                 style={{ color: "var(--color-destructive)", marginTop: 4 }}
                 onClick={() => setAvatar("")}
               >
-                Удалить фото
+                {t("profile.deletePhoto")}
               </button>
             </div>
           )}
@@ -291,7 +264,7 @@ const ProfileForm = () => {
 
       <div className={s.fieldList}>
         <div>
-          <div className={s.fieldLabel}>Имя</div>
+          <div className={s.fieldLabel}>{t("profile.name")}</div>
           <input
             className={s.formInput}
             value={name}
@@ -299,7 +272,7 @@ const ProfileForm = () => {
           />
         </div>
         <div>
-          <div className={s.fieldLabel}>Email</div>
+          <div className={s.fieldLabel}>{t("profile.email")}</div>
           <input
             className={s.formInput}
             type="email"
@@ -308,7 +281,7 @@ const ProfileForm = () => {
           />
         </div>
         <div>
-          <div className={s.fieldLabel}>Телефон</div>
+          <div className={s.fieldLabel}>{t("profile.phone")}</div>
           <input
             className={s.formInput}
             value={phone}
@@ -317,16 +290,16 @@ const ProfileForm = () => {
           />
         </div>
         <div>
-          <div className={s.fieldLabel}>Город</div>
+          <div className={s.fieldLabel}>{t("profile.city")}</div>
           <input
             className={s.formInput}
             value={city}
             onChange={(e) => setCity(e.target.value)}
-            placeholder="Минск"
+            placeholder={t("profile.cityPlaceholder")}
           />
         </div>
         <div className={s.toolbar}>
-          <Button type="submit">Сохранить</Button>
+          <Button type="submit">{t("profile.save")}</Button>
           {saved && (
             <span
               style={{
@@ -335,7 +308,7 @@ const ProfileForm = () => {
                 fontSize: 13,
               }}
             >
-              Сохранено
+              {t("profile.saved")}
             </span>
           )}
         </div>
@@ -343,7 +316,6 @@ const ProfileForm = () => {
     </form>
   );
 };
-
 interface PaymentsProps {
   userId: string | number;
   currency: CurrencyCode;
@@ -359,6 +331,7 @@ const PaymentsSection = ({
   currencies,
   onCurrencyChange,
 }: PaymentsProps) => {
+  const { t } = useTranslation();
   const [cards, setCards] = useState<SavedCard[]>(() => loadCards(userId));
   const [showForm, setShowForm] = useState(false);
   const [num, setNum] = useState("");
@@ -379,24 +352,24 @@ const PaymentsSection = ({
     setHolder("");
     setErrors({});
   };
+
   const validate = (): Record<string, string> => {
     const e: Record<string, string> = {};
     const cleanNum = num.replace(/\s+/g, "");
-    if (!/^\d{13,19}$/.test(cleanNum))
-      e.num = "Введите 13–19 цифр номера карты";
+    if (!/^\d{13,19}$/.test(cleanNum)) e.num = t("checkout.cardNumInvalid");
     if (!/^\d{2}\/\d{2}$/.test(exp)) {
-      e.exp = "Формат MM/YY";
+      e.exp = t("checkout.cardExpInvalid");
     } else {
       const [mm, yy] = exp.split("/").map((x) => parseInt(x, 10));
       const now = new Date();
       const curYear = now.getFullYear() % 100;
       const curMonth = now.getMonth() + 1;
-      if (mm < 1 || mm > 12) e.exp = "Месяц 01–12";
+      if (mm < 1 || mm > 12) e.exp = t("checkout.cardExpMonth");
       else if (yy < curYear || (yy === curYear && mm < curMonth))
-        e.exp = "Срок истёк";
+        e.exp = t("checkout.cardExpired");
     }
-    if (!/^\d{3,4}$/.test(cvv)) e.cvv = "3–4 цифры";
-    if (holder.trim().length < 2) e.holder = "Минимум 2 символа";
+    if (!/^\d{3,4}$/.test(cvv)) e.cvv = t("checkout.cardCvvInvalid");
+    if (holder.trim().length < 2) e.holder = t("checkout.cardHolderRequired");
     return e;
   };
 
@@ -428,10 +401,10 @@ const PaymentsSection = ({
 
   return (
     <div>
-      <h2 className={s.h1}>Платежи</h2>
+      <h2 className={s.h1}>{t("profile.payments")}</h2>
 
       <div className={s.fieldLabel} style={{ marginBottom: 8 }}>
-        Валюта отображения
+        {t("profile.currency")}
       </div>
       <div className={s.currencyRow}>
         {currencies.map((c) => (
@@ -454,12 +427,12 @@ const PaymentsSection = ({
       </div>
 
       <div className={s.fieldLabel} style={{ marginBottom: 8 }}>
-        Мои карты
+        {t("profile.myCards")}
       </div>
       <div className={s.cardsList}>
         {cards.length === 0 && (
           <p style={{ color: "var(--color-muted-fg)", fontSize: 14 }}>
-            Карты ещё не добавлены.
+            {t("profile.noCards")}
           </p>
         )}
         {cards.map((c) => (
@@ -474,8 +447,8 @@ const PaymentsSection = ({
               type="button"
               className={s.cardDel}
               onClick={() => setConfirmId(c.id)}
-              aria-label="Удалить"
-              title="Удалить"
+              aria-label={t("profile.deleteCard")}
+              title={t("profile.deleteCard")}
             >
               <Trash2 size={18} />
             </button>
@@ -486,7 +459,7 @@ const PaymentsSection = ({
       {showForm ? (
         <form className={s.cardForm} onSubmit={addCard}>
           <div className={s.cardFormFull}>
-            <div className={s.fieldLabel}>Номер карты</div>
+            <div className={s.fieldLabel}>{t("checkout.cardNumber")}</div>
             <input
               className={s.formInput}
               value={num}
@@ -497,7 +470,7 @@ const PaymentsSection = ({
             {errors.num && <p className={s.formError}>{errors.num}</p>}
           </div>
           <div>
-            <div className={s.fieldLabel}>Срок (MM/YY)</div>
+            <div className={s.fieldLabel}>{t("checkout.cardExpiry")}</div>
             <input
               className={s.formInput}
               value={exp}
@@ -508,7 +481,7 @@ const PaymentsSection = ({
             {errors.exp && <p className={s.formError}>{errors.exp}</p>}
           </div>
           <div>
-            <div className={s.fieldLabel}>CVV</div>
+            <div className={s.fieldLabel}>{t("checkout.cardCvv")}</div>
             <input
               className={s.formInput}
               value={cvv}
@@ -520,7 +493,7 @@ const PaymentsSection = ({
             {errors.cvv && <p className={s.formError}>{errors.cvv}</p>}
           </div>
           <div className={s.cardFormFull}>
-            <div className={s.fieldLabel}>Имя держателя</div>
+            <div className={s.fieldLabel}>{t("checkout.cardHolder")}</div>
             <input
               className={s.formInput}
               value={holder}
@@ -530,7 +503,7 @@ const PaymentsSection = ({
             {errors.holder && <p className={s.formError}>{errors.holder}</p>}
           </div>
           <div className={cn(s.toolbar, s.cardFormFull)}>
-            <Button type="submit">Сохранить карту</Button>
+            <Button type="submit">{t("profile.saveCard")}</Button>
             <Button
               type="button"
               variant="secondary"
@@ -539,21 +512,21 @@ const PaymentsSection = ({
                 reset();
               }}
             >
-              Отмена
+              {t("common.cancel")}
             </Button>
           </div>
         </form>
       ) : (
         <Button variant="secondary" onClick={() => setShowForm(true)}>
-          Добавить карту
+          {t("profile.addCard")}
         </Button>
       )}
 
       <ConfirmModal
         open={confirmId !== null}
-        title="Удалить карту?"
-        text="Карта будет удалена без возможности восстановления."
-        confirmLabel="Удалить"
+        title={t("profile.deleteCardConfirm")}
+        text={t("profile.deleteCardText")}
+        confirmLabel={t("profile.deleteCard")}
         destructive
         onConfirm={confirmRemove}
         onCancel={() => setConfirmId(null)}
@@ -562,13 +535,16 @@ const PaymentsSection = ({
   );
 };
 const FavoritesTab = () => {
+  const { t } = useTranslation();
   const { ids, remove } = useFavorites();
   const { state, add, remove: cartRemove } = useCart();
   const { format } = useCurrency();
+
   const products = useMemo(
     () => LOCAL_PRODUCTS.filter((p) => ids.includes(p.id)),
     [ids],
   );
+
   if (products.length === 0) {
     return (
       <div className={s.emptyBox}>
@@ -583,22 +559,23 @@ const FavoritesTab = () => {
             marginBottom: 8,
           }}
         >
-          Список избранного пуст
+          {t("favorites.empty")}
         </h2>
-        <p>Добавляйте товары в избранное, чтобы вернуться к ним позже.</p>
+        <p>{t("favorites.emptyHint")}</p>
         <div style={{ marginTop: 16 }}>
           <Link to="/catalog">
             <Button>
-              <ShoppingBag size={16} /> Перейти в каталог
+              <ShoppingBag size={16} /> {t("cart.goToCatalog")}
             </Button>
           </Link>
         </div>
       </div>
     );
   }
+
   return (
     <div>
-      <h2 className={s.h1}>Избранное</h2>
+      <h2 className={s.h1}>{t("profile.favorites")}</h2>
       <div className={s.favList}>
         {products.map((p) => {
           const inCart = state.items.some((i) => i.id === p.id);
@@ -636,7 +613,11 @@ const FavoritesTab = () => {
                   }}
                   disabled={(p.stock ?? 0) === 0}
                   aria-pressed={inCart}
-                  title={inCart ? "Удалить из корзины" : "В корзину"}
+                  title={
+                    inCart
+                      ? t("productCard.removeFromCart")
+                      : t("common.addToCart")
+                  }
                 >
                   <ShoppingCart size={16} />
                 </button>
@@ -644,7 +625,7 @@ const FavoritesTab = () => {
                   type="button"
                   className={s.cardDel}
                   onClick={() => remove(p.id)}
-                  title="Удалить"
+                  title={t("favorites.remove")}
                 >
                   <Trash2 size={18} />
                 </button>
@@ -656,5 +637,54 @@ const FavoritesTab = () => {
     </div>
   );
 };
+
+// Вспомогательные функции (остаются без изменений)
+interface SavedCard {
+  id: string;
+  last4: string;
+  exp: string;
+  holder: string;
+  brand: string;
+}
+
+function detectBrand(num: string): string {
+  const n = num.replace(/\s+/g, "");
+  if (/^4/.test(n)) return "Visa";
+  if (/^5[1-5]/.test(n)) return "MasterCard";
+  if (/^3[47]/.test(n)) return "Amex";
+  if (/^6/.test(n)) return "Maestro";
+  return "Card";
+}
+
+function formatNum(v: string) {
+  return v
+    .replace(/\D/g, "")
+    .slice(0, 19)
+    .replace(/(.{4})/g, "$1 ")
+    .trim();
+}
+
+function formatExp(v: string) {
+  const d = v.replace(/\D/g, "").slice(0, 4);
+  if (d.length < 3) return d;
+  return `${d.slice(0, 2)}/${d.slice(2)}`;
+}
+
+function loadCards(userId: string | number): SavedCard[] {
+  try {
+    const raw = localStorage.getItem(`payment_cards_${userId}`);
+    return raw ? (JSON.parse(raw) as SavedCard[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveCards(userId: string | number, cards: SavedCard[]) {
+  try {
+    localStorage.setItem(`payment_cards_${userId}`, JSON.stringify(cards));
+  } catch {
+    /* ignore */
+  }
+}
 
 export default ProfilePage;

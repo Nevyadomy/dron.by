@@ -1,14 +1,19 @@
 import { useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeft, Home, Search } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/atoms/Button";
 
 const NotFound = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.error("404 Error: User attempted to access non-existent route:", location.pathname);
+    console.error(
+      "404 Error: User attempted to access non-existent route:",
+      location.pathname,
+    );
   }, [location.pathname]);
 
   return (
@@ -34,8 +39,10 @@ const NotFound = () => {
             "linear-gradient(var(--color-border) 1px, transparent 1px), linear-gradient(90deg, var(--color-border) 1px, transparent 1px)",
           backgroundSize: "48px 48px",
           opacity: 0.25,
-          maskImage: "radial-gradient(ellipse at center, black, transparent 70%)",
-          WebkitMaskImage: "radial-gradient(ellipse at center, black, transparent 70%)",
+          maskImage:
+            "radial-gradient(ellipse at center, black, transparent 70%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse at center, black, transparent 70%)",
         }}
       />
       <div
@@ -62,7 +69,9 @@ const NotFound = () => {
         >
           404
         </h1>
-        <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 12 }}>Страница не найдена</h2>
+        <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 12 }}>
+          {t("notFound.title")}
+        </h2>
         <p
           style={{
             fontSize: 15,
@@ -71,26 +80,39 @@ const NotFound = () => {
             lineHeight: 1.6,
           }}
         >
-          Возможно, страница была удалена, переименована или временно недоступна.
-          Проверьте адрес <code style={{
-            background: "var(--color-muted)",
-            padding: "2px 6px",
-            borderRadius: 4,
-            fontSize: 13,
-          }}>{location.pathname}</code> или вернитесь на главную.
+          {t("notFound.message")}
+          <br />
+          {t("notFound.checkAddress")}{" "}
+          <code
+            style={{
+              background: "var(--color-muted)",
+              padding: "2px 6px",
+              borderRadius: 4,
+              fontSize: 13,
+            }}
+          >
+            {location.pathname}
+          </code>
         </p>
-        <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: 12,
+            justifyContent: "center",
+            flexWrap: "wrap",
+          }}
+        >
           <Button onClick={() => navigate(-1)} variant="secondary">
-            <ArrowLeft size={16} /> Назад
+            <ArrowLeft size={16} /> {t("notFound.back")}
           </Button>
           <Link to="/">
             <Button>
-              <Home size={16} /> На главную
+              <Home size={16} /> {t("notFound.toHome")}
             </Button>
           </Link>
           <Link to="/catalog">
             <Button variant="ghost">
-              <Search size={16} /> В каталог
+              <Search size={16} /> {t("notFound.toCatalog")}
             </Button>
           </Link>
         </div>

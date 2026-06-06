@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/atoms/Button";
 import { Input } from "@/components/atoms/Input";
 import { LayoutCard } from "@/components/atoms/LayoutCard";
@@ -13,6 +14,7 @@ import { OAuthRow } from "@/components/atoms/OAuthButtons";
 const FORMSPREE_ID = "xaqvnkzz";
 const FORMSPREE_URL = `https://formspree.io/f/${FORMSPREE_ID}`;
 const DRAFT_KEY = "register_form_draft";
+
 type FormState = {
   name: string;
   email: string;
@@ -20,6 +22,7 @@ type FormState = {
   confirmPassword: string;
   consent: boolean;
 };
+
 const EMPTY_FORM: FormState = {
   name: "",
   email: "",
@@ -27,6 +30,7 @@ const EMPTY_FORM: FormState = {
   confirmPassword: "",
   consent: false,
 };
+
 function readDraft(): FormState {
   try {
     const raw = localStorage.getItem(DRAFT_KEY);
@@ -38,6 +42,7 @@ function readDraft(): FormState {
 }
 
 const RegisterPage = () => {
+  const { t } = useTranslation();
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -46,6 +51,7 @@ const RegisterPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+
   useEffect(() => {
     try {
       localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
@@ -101,7 +107,7 @@ const RegisterPage = () => {
       setTimeout(() => navigate("/catalog"), 800);
     } catch (err) {
       setServerError(
-        err instanceof Error ? err.message : "Не удалось зарегистрироваться",
+        err instanceof Error ? err.message : t("register.errorDefault"),
       );
     } finally {
       setSubmitting(false);
@@ -112,19 +118,23 @@ const RegisterPage = () => {
     <div style={{ maxWidth: 480, margin: "48px auto", padding: 24 }}>
       <LayoutCard padded>
         <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 16 }}>
-          Регистрация
+          {t("register.title")}
         </h1>
 
         {done ? (
           <p style={{ color: "var(--color-success)" }}>
-            Готово! Перенаправляем…
+            {t("register.success")}
           </p>
         ) : (
           <form
             onSubmit={onSubmit}
             style={{ display: "flex", flexDirection: "column" }}
           >
-            <FormField label="Имя" htmlFor="name" error={errors.name}>
+            <FormField
+              label={t("register.name")}
+              htmlFor="name"
+              error={errors.name}
+            >
               <Input
                 id="name"
                 value={form.name}
@@ -132,7 +142,11 @@ const RegisterPage = () => {
                 onChange={(e) => update("name", e.target.value)}
               />
             </FormField>
-            <FormField label="Email" htmlFor="email" error={errors.email}>
+            <FormField
+              label={t("register.email")}
+              htmlFor="email"
+              error={errors.email}
+            >
               <Input
                 id="email"
                 type="email"
@@ -142,7 +156,7 @@ const RegisterPage = () => {
               />
             </FormField>
             <FormField
-              label="Пароль"
+              label={t("register.password")}
               htmlFor="password"
               error={errors.password}
             >
@@ -155,7 +169,7 @@ const RegisterPage = () => {
               />
             </FormField>
             <FormField
-              label="Повторите пароль"
+              label={t("register.confirmPassword")}
               htmlFor="confirmPassword"
               error={errors.confirmPassword}
             >
@@ -186,12 +200,12 @@ const RegisterPage = () => {
                 style={{ marginTop: 0 }}
               />
               <span>
-                Я согласен(на) с{" "}
+                {t("register.consentText")}{" "}
                 <a
                   href="https://center.gov.by/upload/pdf/politika_personal_data_2024.pdf"
                   style={{ color: "var(--color-primary)" }}
                 >
-                  обработкой персональных данных.
+                  {t("register.consentLink")}
                 </a>
               </span>
             </label>
@@ -220,7 +234,7 @@ const RegisterPage = () => {
             )}
 
             <Button type="submit" fullWidth disabled={submitting}>
-              {submitting ? "Отправка" : "Зарегистрироваться"}
+              {submitting ? t("register.processing") : t("register.submit")}
             </Button>
             <OAuthRow />
           </form>
@@ -233,9 +247,9 @@ const RegisterPage = () => {
             color: "var(--color-muted-fg)",
           }}
         >
-          Уже есть аккаунт?{" "}
+          {t("register.haveAccount")}{" "}
           <Link to="/login" style={{ color: "var(--color-primary)" }}>
-            Войти
+            {t("register.loginLink")}
           </Link>
         </p>
       </LayoutCard>

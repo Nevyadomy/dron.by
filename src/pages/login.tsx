@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/atoms/Button";
 import { Input } from "@/components/atoms/Input";
 import { LayoutCard } from "@/components/atoms/LayoutCard";
@@ -11,6 +12,7 @@ import { verifyUser } from "@/services/userStorage";
 import { OAuthRow } from "@/components/atoms/OAuthButtons";
 
 const LoginPage = () => {
+  const { t } = useTranslation();
   const { login } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -36,7 +38,7 @@ const LoginPage = () => {
     try {
       const user = verifyUser(parsed.data.email, parsed.data.password);
       if (!user) {
-        setServerError("Неверный email или пароль");
+        setServerError(t("login.invalidCredentials"));
         return;
       }
       login({ id: user.id, email: user.email, name: user.name });
@@ -52,13 +54,17 @@ const LoginPage = () => {
     <div style={{ maxWidth: 420, margin: "48px auto", padding: 24 }}>
       <LayoutCard padded>
         <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 16 }}>
-          Вход
+          {t("login.title")}
         </h1>
         <form
           onSubmit={onSubmit}
           style={{ display: "flex", flexDirection: "column", gap: 4 }}
         >
-          <FormField label="Email" htmlFor="email" error={errors.email}>
+          <FormField
+            label={t("login.email")}
+            htmlFor="email"
+            error={errors.email}
+          >
             <Input
               id="email"
               type="email"
@@ -68,7 +74,11 @@ const LoginPage = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
           </FormField>
-          <FormField label="Пароль" htmlFor="password" error={errors.password}>
+          <FormField
+            label={t("login.password")}
+            htmlFor="password"
+            error={errors.password}
+          >
             <Input
               id="password"
               type="password"
@@ -84,7 +94,7 @@ const LoginPage = () => {
             </p>
           )}
           <Button type="submit" fullWidth disabled={submitting}>
-            {submitting ? "Вход…" : "Войти"}
+            {submitting ? t("login.processing") : t("login.submit")}
           </Button>
           <OAuthRow />
         </form>
@@ -95,9 +105,9 @@ const LoginPage = () => {
             color: "var(--color-muted-fg)",
           }}
         >
-          Нет аккаунта?{" "}
+          {t("login.noAccount")}{" "}
           <Link to="/register" style={{ color: "var(--color-primary)" }}>
-            Зарегистрироваться
+            {t("login.registerLink")}
           </Link>
         </p>
       </LayoutCard>

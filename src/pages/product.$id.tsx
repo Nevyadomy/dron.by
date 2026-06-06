@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Check, ChevronLeft, Heart, Scale, ShoppingCart } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/atoms/Button";
 import { LayoutCard } from "@/components/atoms/LayoutCard";
 import { SmartImage } from "@/components/atoms/SmartImage";
@@ -17,6 +18,7 @@ import dronePlaceholder from "@/assets/images/common/drone-placeholder.png";
 import { getProductPromo, applyDiscount } from "@/data/promotions";
 
 const ProductPage = () => {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const { data, isLoading, error } = useQuery({
     queryKey: ["product", id],
@@ -51,7 +53,7 @@ const ProductPage = () => {
           textAlign: "center",
         }}
       >
-        Товар не найден.
+        {t("product.notFound")}
       </div>
     );
 
@@ -79,7 +81,7 @@ const ProductPage = () => {
           marginBottom: 16,
         }}
       >
-        <ChevronLeft size={16} /> Назад в каталог
+        <ChevronLeft size={16} /> {t("product.backToCatalog")}
       </Link>
 
       <div className="collapse-md">
@@ -139,7 +141,7 @@ const ProductPage = () => {
                   letterSpacing: "0.04em",
                 }}
               >
-                {promo.badge ?? "Акция"}
+                {promo.badge ?? t("productCard.sale")}
               </span>
             )}
           </div>
@@ -153,16 +155,22 @@ const ProductPage = () => {
                 fontWeight: 500,
               }}
             >
-              Товара нет в наличии
+              {t("product.outOfStock")}
             </p>
           )}
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             {inStock && (
               <Button
                 disabled={!inStock}
-                title={inCart ? "Удалить из корзины" : "Добавить в корзину"}
+                title={
+                  inCart
+                    ? t("productCard.removeFromCart")
+                    : t("common.addToCart")
+                }
                 aria-label={
-                  inCart ? "Удалить из корзины" : "Добавить в корзину"
+                  inCart
+                    ? t("productCard.removeFromCart")
+                    : t("common.addToCart")
                 }
                 style={
                   inCart
@@ -187,11 +195,11 @@ const ProductPage = () => {
               >
                 {inCart ? (
                   <>
-                    <Check size={16} /> В корзине
+                    <Check size={16} /> {t("product.inCart")}
                   </>
                 ) : (
                   <>
-                    <ShoppingCart size={16} /> В корзину
+                    <ShoppingCart size={16} /> {t("product.addToCart")}
                   </>
                 )}
               </Button>
@@ -200,14 +208,18 @@ const ProductPage = () => {
               variant="secondary"
               onClick={() => toggle(data.id)}
               style={{ color: fav ? "var(--color-primary)" : undefined }}
-              title={fav ? "Убрать из избранного" : "Добавить в избранное"}
+              title={
+                fav
+                  ? t("productCard.removeFavorite")
+                  : t("productCard.favorite")
+              }
             >
               <Heart
                 size={16}
                 fill={fav ? "currentColor" : "none"}
                 color={fav ? "var(--color-primary)" : "currentColor"}
               />
-              {fav ? "В избранном" : "В избранное"}
+              {fav ? t("product.inFavorites") : t("product.addToFavorites")}
             </Button>
             <Button
               variant="secondary"
@@ -219,7 +231,7 @@ const ProductPage = () => {
                 }
                 if (isFull) {
                   toast.show({
-                    text: "Достигнут лимит сравнения (5 товаров).",
+                    text: t("compare.limitReached"),
                     variant: "warning",
                     duration: 2500,
                   });
@@ -228,22 +240,26 @@ const ProductPage = () => {
                 const r = addCompare(data.id);
                 if (r === "added")
                   toast.show({
-                    text: "Товар добавлен к сравнению.",
+                    text: t("compare.added"),
                     actionTo: "/compare",
-                    actionLabel: "Перейти",
+                    actionLabel: t("compare.goToCompare"),
                     duration: 2500,
                   });
                 else if (r === "exists")
                   toast.show({
-                    text: "Товар уже в списке сравнения.",
+                    text: t("compare.alreadyExists"),
                     duration: 2500,
                   });
               }}
               style={{ color: inCompare ? "var(--color-primary)" : undefined }}
-              title={inCompare ? "Убрать из сравнения" : "Добавить к сравнению"}
+              title={
+                inCompare
+                  ? t("compare.removeFromCompare")
+                  : t("product.addToCompare")
+              }
             >
               <Scale size={16} />
-              {inCompare ? "В сравнении" : "Сравнить"}
+              {inCompare ? t("product.inCompare") : t("product.addToCompare")}
             </Button>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   FilterSidebar,
   type PriceRange,
@@ -10,7 +11,6 @@ import { ProductGrid } from "@/components/organisms/ProductGrid";
 import { Breadcrumbs } from "@/components/molecules/Breadcrumbs";
 import { Pagination } from "@/components/molecules/Pagination";
 import { fetchProducts } from "@/services/productService";
-import { productsWord } from "@/utils/pluralize";
 import { useCurrency } from "@/hooks/useCurrency";
 import s from "./catalog.module.css";
 
@@ -26,27 +26,32 @@ const PRICE_BOUNDS: { min: number; max: number }[] = [
 ];
 
 const sortOptions = [
-  { value: "price-asc", label: "Цена: по возрастанию" },
-  { value: "price-desc", label: "Цена: по убыванию" },
-  { value: "name-asc", label: "Название: А–Я" },
-  { value: "name-desc", label: "Название: Я–А" },
+  { value: "price-asc", labelKey: "sort.priceAsc" },
+  { value: "price-desc", labelKey: "sort.priceDesc" },
+  { value: "name-asc", labelKey: "sort.nameAsc" },
+  { value: "name-desc", labelKey: "sort.nameDesc" },
 ];
 
 const CatalogPage = () => {
+  const { t } = useTranslation();
   const [params, setParams] = useSearchParams();
   const { format } = useCurrency();
   const priceRanges: PriceRange[] = useMemo(
     () =>
       PRICE_BOUNDS.map((b) => {
         let label: string;
-        if (b.min === 0) label = `До ${format(b.max, { decimals: 0 })}`;
+        if (b.min === 0)
+          label = t("catalog.upTo", { price: format(b.max, { decimals: 0 }) });
         else if (b.max === Infinity)
-          label = `Свыше ${format(b.min, { decimals: 0 })}`;
+          label = t("catalog.over", { price: format(b.min, { decimals: 0 }) });
         else
-          label = `${format(b.min, { decimals: 0 })} – ${format(b.max, { decimals: 0 })}`;
+          label = t("catalog.range", {
+            min: format(b.min, { decimals: 0 }),
+            max: format(b.max, { decimals: 0 }),
+          });
         return { label, min: b.min, max: b.max };
       }),
-    [format],
+    [format, t],
   );
   const search = params.get("q") ?? "";
   const [searchInput, setSearchInput] = useState(search);
@@ -79,7 +84,6 @@ const CatalogPage = () => {
 
   const productsQuery = useQuery({
     queryKey: ["products", { search }],
-    // Fetch full list locally; client-side filtering/pagination follows.
     queryFn: () => fetchProducts({ limit: 1000, search: search || undefined }),
   });
 
@@ -145,7 +149,6 @@ const CatalogPage = () => {
     () => filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize),
     [filtered, currentPage, pageSize],
   );
-  // Reset to first page whenever filter set or page size changes.
   const filterKey = [
     search,
     selectedCategories.join("|"),
@@ -193,9 +196,12 @@ const CatalogPage = () => {
 
   return (
     <div className="page-container">
-      <h1 style={{ fontSize: 24, fontWeight: 700 }}>Каталог</h1>
+      <h1 style={{ fontSize: 24, fontWeight: 700 }}>{t("catalog.title")}</h1>
       <Breadcrumbs
-        items={[{ label: "Главная", to: "/" }, { label: "Каталог" }]}
+        items={[
+          { label: t("breadcrumbs.home"), to: "/" },
+          { label: t("catalog.title") },
+        ]}
       />
 
       <div className={s.layout}>
@@ -223,11 +229,11 @@ const CatalogPage = () => {
         <div className={s.main}>
           <div className={s.toolbar}>
             <p style={{ fontSize: 14, color: "var(--color-muted-fg)" }}>
-              Найдено:{" "}
+              {t("catalog.found")}{" "}
               <strong style={{ color: "var(--color-fg)" }}>
                 {filtered.length}
               </strong>{" "}
-              {productsWord(filtered.length)}
+              {t("catalog.items", { count: filtered.length })}
             </p>
             <div className={s.toolbarRight}>
               <form
@@ -242,7 +248,7 @@ const CatalogPage = () => {
               >
                 <input
                   type="search"
-                  placeholder="Поиск в каталоге"
+                  placeholder={t("catalog.searchPlaceholder")}
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   className={s.searchField}
@@ -255,7 +261,7 @@ const CatalogPage = () => {
               >
                 {sortOptions.map((o) => (
                   <option key={o.value} value={o.value}>
-                    {o.label}
+                    {t(o.labelKey)}
                   </option>
                 ))}
               </select>

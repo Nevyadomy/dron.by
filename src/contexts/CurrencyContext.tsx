@@ -17,34 +17,82 @@ const RATES_DEFAULT = {
   USD: 2.9,
   EUR: 3.36,
   PLN: 0.75,
-  /** 1 RUB -> BYN (100 RUB = 3.8 BYN). */
   RUB: 0.038,
+};
+
+/**
+ * Форматирование числа с правильными разделителями для текущей локали
+ */
+function formatNumber(n: number, decimals: number) {
+  return n.toLocaleString("ru-RU", {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  });
+}
+
+/**
+ * Компонент для отображения символа белорусского рубля через шрифт NBRB
+ */
+const BynSymbol = () => (
+  <span className="nbrb-icon nbrb-icon-byn" aria-label="белорусский рубль">
+    {/* Иконка подставляется через ::before из CSS */}
+  </span>
+);
+
+/**
+ * Получить символ валюты с поддержкой NBRB для BYN
+ */
+const getCurrencySymbol = (code: CurrencyCode): ReactNode => {
+  switch (code) {
+    case "BYN":
+      return <BynSymbol />;
+    case "USD":
+      return "$";
+    case "EUR":
+      return "€";
+    case "PLN":
+      return "zł";
+    case "RUB":
+      return "₽";
+    default:
+      return code;
+  }
 };
 
 function buildList(): CurrencyInfo[] {
   return [
-    { code: "BYN", symbol: "Br", name: "Белорусский рубль", rate: 1 },
+    {
+      code: "BYN",
+      symbol: "Br",
+      symbolNode: <BynSymbol />,
+      name: "Белорусский рубль",
+      rate: 1,
+    },
     {
       code: "USD",
       symbol: "$",
+      symbolNode: "$",
       name: "Доллар США",
       rate: readEnvRate("VITE_USD_RATE", RATES_DEFAULT.USD),
     },
     {
       code: "EUR",
       symbol: "€",
+      symbolNode: "€",
       name: "Евро",
       rate: readEnvRate("VITE_EUR_RATE", RATES_DEFAULT.EUR),
     },
     {
       code: "PLN",
       symbol: "zł",
+      symbolNode: "zł",
       name: "Польский злотый",
       rate: readEnvRate("VITE_PLN_RATE", RATES_DEFAULT.PLN),
     },
     {
       code: "RUB",
       symbol: "₽",
+      symbolNode: "₽",
       name: "Российский рубль",
       rate: readEnvRate("VITE_RUB_RATE", RATES_DEFAULT.RUB),
     },
@@ -57,13 +105,6 @@ function readStored(): CurrencyCode {
   if (raw && ["BYN", "USD", "EUR", "PLN", "RUB"].includes(raw))
     return raw as CurrencyCode;
   return "BYN";
-}
-
-function formatNumber(n: number, decimals: number) {
-  return n.toLocaleString("ru-RU", {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-  });
 }
 
 export function CurrencyProvider({ children }: { children: ReactNode }) {
@@ -87,18 +128,46 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
   );
 
   const convert = useCallback((byn: number) => byn / info.rate, [info]);
+
   const format = useCallback(
-    (byn: number, opts?: { decimals?: number }) => {
+    (byn: number, opts?: { decimals?: number }): ReactNode => {
       const value = convert(byn);
       const decimals = opts?.decimals ?? 2;
-      return `${formatNumber(value, decimals)} ${info.symbol}`;
+      const formattedNumber = formatNumber(value, decimals);
+      const symbol = getCurrencySymbol(currency);
+
+      return (
+        <>
+          {formattedNumber} {symbol}
+        </>
+      );
     },
-    [convert, info],
+    [convert, currency],
+  );
+
+  const formatString = useCallback(
+    (byn: number, opts?: { decimals?: number }): string => {
+      const value = convert(byn);
+      const decimals = opts?.decimals ?? 2;
+      const formattedNumber = formatNumber(value, decimals);
+      // Для строкового представления используем обычный символ
+      const symbol = currency === "BYN" ? "Br" : info.symbol;
+      return `${formattedNumber} ${symbol}`;
+    },
+    [convert, currency, info.symbol],
   );
 
   const value = useMemo(
-    () => ({ currency, setCurrency, list, info, convert, format }),
-    [currency, setCurrency, list, info, convert, format],
+    () => ({
+      currency,
+      setCurrency,
+      list,
+      info,
+      convert,
+      format,
+      formatString,
+    }),
+    [currency, setCurrency, list, info, convert, format, formatString],
   );
 
   return (

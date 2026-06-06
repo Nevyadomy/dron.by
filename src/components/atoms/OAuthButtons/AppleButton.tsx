@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import styles from "./OAuthButtons.module.css";
 
 const AppleIcon = () => (
@@ -17,7 +18,8 @@ export interface AppleButtonProps {
   label?: string;
 }
 
-export const AppleButton = ({ label = "Apple" }: AppleButtonProps) => {
+export const AppleButton = ({ label }: AppleButtonProps) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -37,7 +39,7 @@ export const AppleButton = ({ label = "Apple" }: AppleButtonProps) => {
         <span className={styles.icon}>
           <AppleIcon />
         </span>
-        {label}
+        {label ?? t("oauth.apple")}
       </button>
       {open && (
         <div
@@ -48,7 +50,7 @@ export const AppleButton = ({ label = "Apple" }: AppleButtonProps) => {
         >
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <p style={{ fontSize: 15, marginBottom: 16 }}>
-              Apple Sign-In is not integrated yet.
+              {t("oauth.appleNotIntegrated")}
             </p>
             <button
               type="button"
@@ -56,7 +58,7 @@ export const AppleButton = ({ label = "Apple" }: AppleButtonProps) => {
               onClick={() => setOpen(false)}
               style={{ width: "auto", padding: "8px 18px" }}
             >
-              Закрыть
+              {t("common.close")}
             </button>
           </div>
         </div>

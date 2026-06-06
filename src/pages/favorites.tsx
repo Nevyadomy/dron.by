@@ -2,21 +2,22 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/atoms/Button";
 import { ProductGrid } from "@/components/organisms/ProductGrid";
 import { Breadcrumbs } from "@/components/molecules/Breadcrumbs";
 import { useFavorites } from "@/contexts/useFavorites";
 import { fetchProducts } from "@/services/productService";
-import { productsWord } from "@/utils/pluralize";
 
 const sortOptions = [
-  { value: "name-asc", label: "Название: А–Я" },
-  { value: "name-desc", label: "Название: Я–А" },
-  { value: "price-asc", label: "Цена: по возрастанию" },
-  { value: "price-desc", label: "Цена: по убыванию" },
+  { value: "name-asc", labelKey: "favorites.sortByNameAsc" },
+  { value: "name-desc", labelKey: "favorites.sortByNameDesc" },
+  { value: "price-asc", labelKey: "favorites.sortByPriceAsc" },
+  { value: "price-desc", labelKey: "favorites.sortByPriceDesc" },
 ];
 
 const FavoritesPage = () => {
+  const { t } = useTranslation();
   const { ids, clear } = useFavorites();
   const [sortBy, setSortBy] = useState("name-asc");
 
@@ -43,9 +44,12 @@ const FavoritesPage = () => {
 
   return (
     <div className="page-container">
-      <h1 style={{ fontSize: 24, fontWeight: 700 }}>Избранное</h1>
+      <h1 style={{ fontSize: 24, fontWeight: 700 }}>{t("favorites.title")}</h1>
       <Breadcrumbs
-        items={[{ label: "Главная", to: "/" }, { label: "Избранное" }]}
+        items={[
+          { label: t("breadcrumbs.home"), to: "/" },
+          { label: t("favorites.title") },
+        ]}
       />
 
       <div
@@ -64,7 +68,7 @@ const FavoritesPage = () => {
           <strong style={{ color: "var(--color-fg)" }}>
             {favorites.length}
           </strong>{" "}
-          {productsWord(favorites.length)}
+          {t("catalog.items", { count: favorites.length })}
         </p>
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           <select
@@ -83,7 +87,7 @@ const FavoritesPage = () => {
           >
             {sortOptions.map((o) => (
               <option key={o.value} value={o.value}>
-                {o.label}
+                {t(o.labelKey)}
               </option>
             ))}
           </select>
@@ -94,8 +98,8 @@ const FavoritesPage = () => {
               clear();
             }}
             disabled={favorites.length === 0}
-            aria-label="Удалить всё"
-            title="Удалить всё"
+            aria-label={t("favorites.removeAll")}
+            title={t("favorites.removeAll")}
             style={{
               border: "none",
               borderRadius: 8,
@@ -110,7 +114,7 @@ const FavoritesPage = () => {
               opacity: favorites.length === 0 ? 0.5 : 1,
             }}
           >
-            <Trash2 size={16} /> Удалить всё
+            <Trash2 size={16} /> {t("favorites.removeAll")}
           </button>
         </div>
       </div>
@@ -118,10 +122,10 @@ const FavoritesPage = () => {
       {ids.length === 0 ? (
         <div style={{ textAlign: "center", padding: 48 }}>
           <p style={{ color: "var(--color-muted-fg)", marginBottom: 16 }}>
-            Добавляйте товары в избранное, нажав на сердечко в карточке.
+            {t("favorites.emptyHint")}
           </p>
           <Link to="/catalog">
-            <Button>Перейти в каталог</Button>
+            <Button>{t("cart.goToCatalog")}</Button>
           </Link>
         </div>
       ) : (

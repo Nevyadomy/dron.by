@@ -1,3 +1,4 @@
+import i18n from "@/i18n";
 import { LOCAL_PRODUCTS, paginateLocal, searchLocal } from "@/data/products";
 import { type Product, type ProductList } from "@/schemas/product.schema";
 
@@ -8,6 +9,17 @@ export interface FetchProductsParams {
   search?: string;
   category?: string;
 }
+
+const t = (key: string) => {
+  const translations: Record<string, Record<string, string>> = {
+    ru: { "product.notFound": "Товар не найден" },
+    be: { "product.notFound": "Тавар не знойдзены" },
+    en: { "product.notFound": "Product not found" },
+    pl: { "product.notFound": "Produkt nie znaleziony" },
+  };
+  const lang = i18n.language as keyof typeof translations;
+  return translations[lang]?.[key] ?? translations.ru[key];
+};
 
 const simulate = <T>(value: T, ms = 150): Promise<T> =>
   new Promise((resolve) => setTimeout(() => resolve(value), ms));
@@ -26,7 +38,7 @@ export async function fetchProducts(
 export async function fetchProduct(id: number | string): Promise<Product> {
   const numericId = typeof id === "string" ? parseInt(id, 10) : id;
   const product = LOCAL_PRODUCTS.find((p) => p.id === numericId);
-  if (!product) throw new Error("Товар не найден");
+  if (!product) throw new Error(t("product.notFound"));
   return simulate(product);
 }
 

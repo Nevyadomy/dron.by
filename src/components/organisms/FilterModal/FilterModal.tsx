@@ -1,5 +1,6 @@
 import { X, SlidersHorizontal } from "lucide-react";
 import { type ReactNode, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import styles from "./FilterModal.module.css";
 
 export interface FilterModalProps {
@@ -8,6 +9,7 @@ export interface FilterModalProps {
 }
 
 export const FilterModal = ({ activeCount, children }: FilterModalProps) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -29,7 +31,7 @@ export const FilterModal = ({ activeCount, children }: FilterModalProps) => {
         onClick={() => setOpen(true)}
       >
         <SlidersHorizontal size={16} />
-        Фильтры
+        {t("filter.title")}
         {activeCount > 0 && <span className={styles.count}>{activeCount}</span>}
       </button>
 
@@ -45,14 +47,15 @@ export const FilterModal = ({ activeCount, children }: FilterModalProps) => {
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.head}>
               <span className={styles.title}>
-                Фильтры{activeCount > 0 ? ` (${activeCount})` : ""}
+                {t("filter.title")}
+                {activeCount > 0 ? ` (${activeCount})` : ""}
               </span>
               <button
                 type="button"
                 className={styles.close}
                 onClick={() => setOpen(false)}
-                aria-label="Закрыть"
-                title="Закрыть"
+                aria-label={t("common.close")}
+                title={t("common.close")}
               >
                 <X size={20} />
               </button>

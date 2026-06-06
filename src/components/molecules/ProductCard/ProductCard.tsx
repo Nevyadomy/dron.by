@@ -1,5 +1,6 @@
 import { Heart, ShoppingCart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { LayoutCard } from "@/components/atoms/LayoutCard";
 import { SmartImage } from "@/components/atoms/SmartImage";
 import { RatingValue } from "@/components/atoms/RatingValue";
@@ -17,6 +18,7 @@ export interface ProductCardProps {
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {
+  const { t } = useTranslation();
   const { isFavorite, toggle } = useFavorites();
   const { state, add, remove } = useCart();
   const { format } = useCurrency();
@@ -48,7 +50,9 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     >
       <div className={styles.imageArea}>
         {promo && (
-          <span className={styles.saleBadge}>{promo.badge ?? "Акция"}</span>
+          <span className={styles.saleBadge}>
+            {promo.badge ?? t("productCard.sale")}
+          </span>
         )}
         <SmartImage src={image} alt={product.title} loading="lazy" />
       </div>
@@ -70,7 +74,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               </span>
             )}
             <span>
-              {format(finalPrice)} <span>/ шт</span>
+              {format(finalPrice)} <span>{t("productCard.perItem")}</span>
             </span>
           </span>
         </p>
@@ -82,13 +86,13 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             )}
           >
             <span className={styles.dot} />
-            {inStock ? "В наличии" : "Нет в наличии"}
+            {inStock ? t("common.inStock") : t("common.outOfStock")}
           </span>
           <div className={styles.actions}>
             <button
               type="button"
-              aria-label="В избранное"
-              title="В избранное"
+              aria-label={t("productCard.favorite")}
+              title={t("productCard.favorite")}
               onClick={() => toggle(product.id)}
               className={cn(styles.favBtn, fav && styles.active)}
             >
@@ -98,17 +102,17 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               type="button"
               aria-label={
                 !inStock
-                  ? "Товар недоступен"
+                  ? t("productCard.unavailable")
                   : inCart
-                    ? "Удалить из корзины"
-                    : "В корзину"
+                    ? t("productCard.removeFromCart")
+                    : t("productCard.inCart")
               }
               title={
                 !inStock
-                  ? "Товар недоступен"
+                  ? t("productCard.unavailable")
                   : inCart
-                    ? "Удалить из корзины"
-                    : "В корзину"
+                    ? t("productCard.removeFromCart")
+                    : t("common.addToCart")
               }
               disabled={!inStock}
               onClick={() => {

@@ -1,11 +1,12 @@
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Breadcrumbs } from "@/components/molecules/Breadcrumbs";
 import { ProductGrid } from "@/components/organisms/ProductGrid";
 import { LOCAL_PRODUCTS, searchLocal } from "@/data/products";
-import { productsWord } from "@/utils/pluralize";
 
 const SearchPage = () => {
+  const { t } = useTranslation();
   const [params] = useSearchParams();
   const query = params.get("q") ?? "";
 
@@ -17,10 +18,13 @@ const SearchPage = () => {
   return (
     <div className="page-container">
       <h1 style={{ fontSize: 24, fontWeight: 700 }}>
-        {query ? <>Результаты поиска по запросу «{query}»</> : "Поиск"}
+        {query ? t("search.resultsTitle", { query }) : t("search.title")}
       </h1>
       <Breadcrumbs
-        items={[{ label: "Главная", to: "/" }, { label: "Поиск" }]}
+        items={[
+          { label: t("breadcrumbs.home"), to: "/" },
+          { label: t("search.title") },
+        ]}
       />
 
       {query && (
@@ -31,9 +35,9 @@ const SearchPage = () => {
             margin: "16px 0",
           }}
         >
-          Найдено:{" "}
+          {t("search.found")}{" "}
           <strong style={{ color: "var(--color-fg)" }}>{results.length}</strong>{" "}
-          {productsWord(results.length)}
+          {t("catalog.items", { count: results.length })}
         </p>
       )}
 
@@ -56,11 +60,9 @@ const SearchPage = () => {
                 marginBottom: 8,
               }}
             >
-              Ничего не найдено
+              {t("search.nothingFound")}
             </p>
-            <p>
-              Попробуйте изменить запрос или поискать по другим ключевым словам.
-            </p>
+            <p>{t("search.nothingFoundHint")}</p>
           </div>
         )
       ) : (
@@ -71,7 +73,7 @@ const SearchPage = () => {
             color: "var(--color-muted-fg)",
           }}
         >
-          Введите запрос, чтобы найти товары.
+          {t("search.enterQuery")}
         </div>
       )}
     </div>

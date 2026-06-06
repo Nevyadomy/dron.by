@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import useEmblaCarousel from "embla-carousel-react";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Breadcrumbs } from "@/components/molecules/Breadcrumbs";
 import { Lightbox } from "@/components/organisms/Lightbox";
 import { useReveal } from "@/hooks/useReveal";
@@ -11,122 +12,54 @@ import s from "./about.module.css";
 
 const BRANDS = ["DJI", "Autel", "BetaFPV", "GoPro", "Insta360", "PGYTECH"];
 
-const TIMELINE = [
-  {
-    year: "2024",
-    title: "Старт DRON.BY",
-    text: "Запустили онлайн-витрину и собрали первую команду пилотов-консультантов.",
-  },
-  {
-    year: "2025",
-    title: "Сервис и обучение",
-    text: "Открыли мастерскую полного цикла и школу пилотов для новичков и профи.",
-  },
-  {
-    year: "2026",
-    title: "Прямые поставки",
-    text: "Подписали дистрибьюторские соглашения с ключевыми мировыми брендами.",
-  },
-];
-
-const STATS = [
-  { value: 12000, suffix: "+", label: "Довольных клиентов" },
-  { value: 350, suffix: "+", label: "Моделей в каталоге" },
-  { value: 24, suffix: "/7", label: "Поддержка пилотов" },
-];
-
-const GALLERY = [
-  "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=900&q=80",
-  "https://images.unsplash.com/photo-1508444845599-5c89863b1c44?w=900&q=80",
-  "https://images.unsplash.com/photo-1521405924368-64c5b84bec60?w=900&q=80",
-  "https://images.unsplash.com/photo-1524143986875-3b098d78b363?w=900&q=80",
-  "https://images.unsplash.com/photo-1527977966376-1c8408f9f108?w=900&q=80",
-  "https://images.unsplash.com/photo-1579829366248-204fe8413f31?w=900&q=80",
-  "https://images.unsplash.com/photo-1506947411487-a56738267384?w=900&q=80",
-  "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=900&q=80",
-  "https://images.unsplash.com/photo-1517059224940-d4af9eec41b7?w=900&q=80",
-  "https://images.unsplash.com/photo-1500627964684-141351970a7f?w=900&q=80",
-];
-
-const Reveal = ({
-  children,
-  delay = 0,
-}: {
-  children: React.ReactNode;
-  delay?: number;
-}) => {
-  const { ref, visible } = useReveal<HTMLDivElement>();
-  return (
-    <div
-      ref={ref}
-      className={cn(s.reveal, visible && s.revealVisible)}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
-      {children}
-    </div>
-  );
-};
-
-function useCountUp(target: number, active: boolean, duration = 2000) {
-  const [val, setVal] = useState(0);
-  useEffect(() => {
-    if (!active) return;
-    let raf = 0;
-    const start = performance.now();
-    const tick = (t: number) => {
-      const p = Math.min(1, (t - start) / duration);
-      setVal(Math.round(target * (1 - Math.pow(1 - p, 3))));
-      if (p < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [target, active, duration]);
-  return val;
-}
-
-const Stat = ({
-  value,
-  suffix,
-  label,
-}: {
-  value: number;
-  suffix: string;
-  label: string;
-}) => {
-  const { ref, visible } = useReveal<HTMLDivElement>(0.4);
-  const n = useCountUp(value, visible);
-  return (
-    <div
-      ref={ref}
-      className={cn(s.statCard, s.reveal, visible && s.revealVisible)}
-    >
-      <div className={s.statNum}>
-        {n.toLocaleString("ru-RU")}
-        {suffix}
-      </div>
-      <div className={s.statLabel}>{label}</div>
-    </div>
-  );
-};
-
 const AboutPage = () => {
+  const { t } = useTranslation();
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" });
   const [selected, setSelected] = useState(0);
   const [lightbox, setLightbox] = useState<string | null>(null);
   const pausedRef = useRef(false);
   const intervalRef = useRef<number | null>(null);
 
+  const TIMELINE = [
+    {
+      year: "2024",
+      title: t("about.timeline2024Title"),
+      text: t("about.timeline2024Text"),
+    },
+    {
+      year: "2025",
+      title: t("about.timeline2025Title"),
+      text: t("about.timeline2025Text"),
+    },
+    {
+      year: "2026",
+      title: t("about.timeline2026Title"),
+      text: t("about.timeline2026Text"),
+    },
+  ];
+
+  const STATS = [
+    { value: 12000, suffix: "+", label: t("about.clients") },
+    { value: 350, suffix: "+", label: t("about.models") },
+    { value: 24, suffix: "/7", label: t("about.support") },
+  ];
+
+  const GALLERY = [
+    "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=900&q=80",
+    "https://images.unsplash.com/photo-1508444845599-5c89863b1c44?w=900&q=80",
+    "https://images.unsplash.com/photo-1521405924368-64c5b84bec60?w=900&q=80",
+    "https://images.unsplash.com/photo-1524143986875-3b098d78b363?w=900&q=80",
+    "https://images.unsplash.com/photo-1527977966376-1c8408f9f108?w=900&q=80",
+    "https://images.unsplash.com/photo-1579829366248-204fe8413f31?w=900&q=80",
+    "https://images.unsplash.com/photo-1506947411487-a56738267384?w=900&q=80",
+    "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=900&q=80",
+    "https://images.unsplash.com/photo-1517059224940-d4af9eec41b7?w=900&q=80",
+    "https://images.unsplash.com/photo-1500627964684-141351970a7f?w=900&q=80",
+  ];
+
   useEffect(() => {
-    document.title = "О нас | DRON.BY — интернет-магазин дронов";
-    const meta =
-      document.querySelector('meta[name="description"]') ??
-      Object.assign(document.createElement("meta"), { name: "description" });
-    meta.setAttribute(
-      "content",
-      "DRON.BY — официальный магазин квадрокоптеров и аксессуаров в Беларуси. История, цифры, бренды и галерея.",
-    );
-    if (!meta.parentElement) document.head.appendChild(meta);
-  }, []);
+    document.title = `${t("about.title")} | DRON.BY`;
+  }, [t]);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -138,7 +71,6 @@ const AboutPage = () => {
     };
   }, [emblaApi]);
 
-  // Auto-rotate gallery. Pauses on hover/touch/lightbox.
   useEffect(() => {
     if (!emblaApi) return;
     const tick = () => {
@@ -149,6 +81,7 @@ const AboutPage = () => {
       if (intervalRef.current) window.clearInterval(intervalRef.current);
     };
   }, [emblaApi, lightbox]);
+
   const pause = useCallback(() => {
     pausedRef.current = true;
   }, []);
@@ -179,25 +112,24 @@ const AboutPage = () => {
         }}
       >
         <Breadcrumbs
-          items={[{ label: "Главная", to: "/" }, { label: "О нас" }]}
+          items={[
+            { label: t("breadcrumbs.home"), to: "/" },
+            { label: t("about.title") },
+          ]}
         />
       </div>
       <section className={s.hero}>
         <div className={s.heroContent}>
-          <h1 className={s.heroSlogan}>Дроны без компромиссов</h1>
-          <p className={s.heroText}>
-            DRON.BY — это магазин, сервис и сообщество пилотов в одном месте.
-            Выбираем технику, которой доверяем сами, и помогаем поднять её в
-            воздух.
-          </p>
+          <h1 className={s.heroSlogan}>{t("about.heroTitle")}</h1>
+          <p className={s.heroText}>{t("about.heroText")}</p>
           <Link to="/catalog" className={s.heroCta}>
-            Перейти в каталог <ArrowRight size={18} />
+            {t("about.heroCta")} <ArrowRight size={18} />
           </Link>
         </div>
       </section>
 
       <section className={s.section}>
-        <h2 className={s.sectionTitle}>Наша история</h2>
+        <h2 className={s.sectionTitle}>{t("about.history")}</h2>
         <div className={s.timeline}>
           {TIMELINE.map((it, i) => (
             <FragmentWithDot key={it.year} isLast={i === TIMELINE.length - 1}>
@@ -214,7 +146,7 @@ const AboutPage = () => {
       </section>
 
       <section className={s.section}>
-        <h2 className={s.sectionTitle}>Технологии и партнёры</h2>
+        <h2 className={s.sectionTitle}>{t("about.techPartners")}</h2>
         <div className={cn(s.marquee, s.marqueeStatic)}>
           <div className={s.marqueeTrack}>
             {[...BRANDS, ...BRANDS, ...BRANDS, ...BRANDS].map((b, i) => (
@@ -227,7 +159,7 @@ const AboutPage = () => {
       </section>
 
       <section className={s.section}>
-        <h2 className={s.sectionTitle}>Цифры, которыми мы гордимся</h2>
+        <h2 className={s.sectionTitle}>{t("about.statsTitle")}</h2>
         <div className={s.stats}>
           {STATS.map((st) => (
             <Stat key={st.label} {...st} />
@@ -236,7 +168,7 @@ const AboutPage = () => {
       </section>
 
       <section className={s.section}>
-        <h2 className={s.sectionTitle}>Полёты наших пилотов</h2>
+        <h2 className={s.sectionTitle}>{t("about.galleryTitle")}</h2>
         <div
           className={s.galleryShell}
           onMouseEnter={pause}
@@ -248,8 +180,8 @@ const AboutPage = () => {
             type="button"
             className={cn(s.galleryNav, s.galleryNavPrev)}
             onClick={scrollPrev}
-            aria-label="Предыдущее"
-            title="Предыдущее фото"
+            aria-label={t("pagination.previousAria")}
+            title={t("pagination.previous")}
           >
             <ChevronLeft size={22} />
           </button>
@@ -261,11 +193,11 @@ const AboutPage = () => {
                   type="button"
                   className={s.galleryItem}
                   onClick={() => setLightbox(src)}
-                  aria-label={`Открыть фото ${i + 1}`}
-                  title="Открыть фото"
+                  aria-label={t("about.openPhoto", { number: i + 1 })}
+                  title={t("about.openPhotoTitle")}
                 >
                   <img src={src} alt={`Aerial photo ${i + 1}`} loading="lazy" />
-                  <span className={s.overlay}>Смотреть</span>
+                  <span className={s.overlay}>{t("about.view")}</span>
                 </button>
               ))}
             </div>
@@ -274,8 +206,8 @@ const AboutPage = () => {
             type="button"
             className={cn(s.galleryNav, s.galleryNavNext)}
             onClick={scrollNext}
-            aria-label="Следующее"
-            title="Следующее фото"
+            aria-label={t("pagination.nextAria")}
+            title={t("pagination.next")}
           >
             <ChevronRight size={22} />
           </button>
@@ -286,7 +218,7 @@ const AboutPage = () => {
               key={i}
               type="button"
               className={cn(s.dot, selected === i && s.dotActive)}
-              aria-label={`К фото ${i + 1}`}
+              aria-label={t("about.goToPhoto", { number: i + 1 })}
               onClick={() => scrollTo(i)}
             />
           ))}
@@ -300,7 +232,25 @@ const AboutPage = () => {
   );
 };
 
-export default AboutPage;
+// Вспомогательные компоненты остаются без изменений
+const Reveal = ({
+  children,
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  delay?: number;
+}) => {
+  const { ref, visible } = useReveal<HTMLDivElement>();
+  return (
+    <div
+      ref={ref}
+      className={cn(s.reveal, visible && s.revealVisible)}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+};
 
 const FragmentWithDot = ({
   children,
@@ -314,3 +264,47 @@ const FragmentWithDot = ({
     {!isLast && <span className={s.tlDot} aria-hidden />}
   </>
 );
+
+const Stat = ({
+  value,
+  suffix,
+  label,
+}: {
+  value: number;
+  suffix: string;
+  label: string;
+}) => {
+  const { ref, visible } = useReveal<HTMLDivElement>(0.4);
+  const n = useCountUp(value, visible);
+  return (
+    <div
+      ref={ref}
+      className={cn(s.statCard, s.reveal, visible && s.revealVisible)}
+    >
+      <div className={s.statNum}>
+        {n.toLocaleString("ru-RU")}
+        {suffix}
+      </div>
+      <div className={s.statLabel}>{label}</div>
+    </div>
+  );
+};
+
+function useCountUp(target: number, active: boolean, duration = 2000) {
+  const [val, setVal] = useState(0);
+  useEffect(() => {
+    if (!active) return;
+    let raf = 0;
+    const start = performance.now();
+    const tick = (t: number) => {
+      const p = Math.min(1, (t - start) / duration);
+      setVal(Math.round(target * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, active, duration]);
+  return val;
+}
+
+export default AboutPage;

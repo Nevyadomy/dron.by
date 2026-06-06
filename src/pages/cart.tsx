@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/atoms/Button";
 import { LayoutCard } from "@/components/atoms/LayoutCard";
 import { Breadcrumbs } from "@/components/molecules/Breadcrumbs";
@@ -11,13 +12,13 @@ import { useAuthPrompt } from "@/contexts/useAuthPrompt";
 import { useCurrency } from "@/hooks/useCurrency";
 import dronePlaceholder from "@/assets/images/common/drone-placeholder.png";
 import { getProductPromo, applyDiscount } from "@/data/promotions";
-import { productsWord } from "@/utils/pluralize";
 import styles from "./cart.module.css";
 
 const FORMSPREE_ORDER_ID = "xdabkvoy";
 const FORMSPREE_ORDER_URL = `https://formspree.io/f/${FORMSPREE_ORDER_ID}`;
 
 const CartPage = () => {
+  const { t } = useTranslation();
   const { state, totalCount, totalPrice, increment, decrement, remove, clear } =
     useCart();
   const { user, isAuthenticated } = useAuth();
@@ -41,28 +42,28 @@ const CartPage = () => {
   if (state.items.length === 0) {
     return (
       <div className={styles.wrap}>
-        <h1 style={{ fontSize: 24, fontWeight: 700 }}>Корзина</h1>
+        <h1 style={{ fontSize: 24, fontWeight: 700 }}>{t("cart.title")}</h1>
         <Breadcrumbs
-          items={[{ label: "Главная", to: "/" }, { label: "Корзина" }]}
+          items={[
+            { label: t("breadcrumbs.home"), to: "/" },
+            { label: t("cart.title") },
+          ]}
         />
         {success ? (
           <LayoutCard padded>
-            <div className={styles.success}>
-              Заказ оформлен! Подтверждение отправлено на ваш e-mail.
-            </div>
+            <div className={styles.success}>{t("checkout.orderPlaced")}</div>
             <Link to="/catalog">
-              <Button>Вернуться в каталог</Button>
+              <Button>{t("cart.backToCatalog")}</Button>
             </Link>
           </LayoutCard>
         ) : (
           <LayoutCard padded>
             <div className={styles.empty}>
               <p style={{ color: "var(--color-muted-fg)", marginBottom: 16 }}>
-                Корзина пуста. Добавьте товары из каталога, чтобы оформить
-                заказ.
+                {t("cart.empty")}
               </p>
               <Link to="/catalog">
-                <Button>Перейти в каталог</Button>
+                <Button>{t("cart.goToCatalog")}</Button>
               </Link>
             </div>
           </LayoutCard>
@@ -97,11 +98,11 @@ const CartPage = () => {
       )
       .join("\n");
     const message =
-      `Заказ в DRON.BY\n\n` +
-      `Здравствуйте, ${user.name || user.email}!\n\n` +
-      `Ваш заказ оформлен:\n${orderItems}\n\n` +
-      `Итого: ${format(orderTotal)}\n\n` +
-      `Спасибо за покупку!`;
+      `${t("cart.orderTitle")}\n\n` +
+      `${t("cart.hello")} ${user.name || user.email}!\n\n` +
+      `${t("cart.orderPlacedMsg")}\n${orderItems}\n\n` +
+      `${t("cart.total")}: ${format(orderTotal)}\n\n` +
+      `${t("cart.thanks")}`;
 
     try {
       if (FORMSPREE_ORDER_ID) {
@@ -115,14 +116,13 @@ const CartPage = () => {
             email: user.email,
             _replyto: user.email,
             name: user.name || user.email,
-            subject: "Заказ в DRON.BY",
+            subject: t("cart.orderSubject"),
             message,
             order_items: orderItems,
             total: `${orderTotal.toFixed(2)} BYN`,
           }),
         });
-        if (!res.ok)
-          throw new Error("Не удалось отправить заказ. Попробуйте позже.");
+        if (!res.ok) throw new Error(t("cart.submitError"));
       }
       if (itemIds) {
         itemIds.forEach((id) => remove(id));
@@ -131,9 +131,7 @@ const CartPage = () => {
       }
       setSuccess(true);
     } catch (e) {
-      setError(
-        e instanceof Error ? e.message : "Ошибка при оформлении заказа.",
-      );
+      setError(e instanceof Error ? e.message : t("cart.submitErrorDefault"));
     } finally {
       setSubmitting(false);
       setBuyingId(null);
@@ -154,22 +152,25 @@ const CartPage = () => {
 
   return (
     <div className={styles.wrap}>
-      <h1 style={{ fontSize: 24, fontWeight: 700 }}>Корзина</h1>
+      <h1 style={{ fontSize: 24, fontWeight: 700 }}>{t("cart.title")}</h1>
       <Breadcrumbs
-        items={[{ label: "Главная", to: "/" }, { label: "Корзина" }]}
+        items={[
+          { label: t("breadcrumbs.home"), to: "/" },
+          { label: t("cart.title") },
+        ]}
       />
 
       <div className={styles.layout}>
         <LayoutCard padded>
           <div className={styles.shopHeader}>
             <div className={styles.shopTitleGroup}>
-              <span className={styles.shopName}>Магазин</span>
+              <span className={styles.shopName}>{t("cart.store")}</span>
               <span className={styles.shopMeta}>
-                {totalCount} {productsWord(totalCount)}
+                {t("cart.itemsCount", { count: totalCount })}
               </span>
             </div>
             <button type="button" onClick={clear} className={styles.clearBtn}>
-              Очистить корзину
+              {t("cart.clear")}
             </button>
           </div>
 
@@ -187,7 +188,8 @@ const CartPage = () => {
                   {item.title}
                 </Link>
                 <div className={styles.stockBadge}>
-                  <span className={styles.stockDot} />В наличии
+                  <span className={styles.stockDot} />
+                  {t("cart.inStock")}
                 </div>
               </div>
               <div className={styles.qty}>
@@ -195,8 +197,8 @@ const CartPage = () => {
                   type="button"
                   className={styles.qtyBtn}
                   onClick={() => decrement(item.id)}
-                  aria-label="Уменьшить"
-                  title="Уменьшить"
+                  aria-label={t("cart.quantityDecrease")}
+                  title={t("cart.quantityDecrease")}
                 >
                   <Minus size={14} />
                 </button>
@@ -205,8 +207,8 @@ const CartPage = () => {
                   type="button"
                   className={styles.qtyBtn}
                   onClick={() => increment(item.id)}
-                  aria-label="Увеличить"
-                  title="Увеличить"
+                  aria-label={t("cart.quantityIncrease")}
+                  title={t("cart.quantityIncrease")}
                 >
                   <Plus size={14} />
                 </button>
@@ -216,11 +218,11 @@ const CartPage = () => {
                 className={styles.buyBtn}
                 onClick={() => handleBuyOne(item.id)}
                 disabled={submitting}
-                title="Купить этот товар"
+                title={t("cart.buyNow")}
               >
                 <ShoppingBag size={14} />
                 <span>
-                  <span>Купить</span>
+                  <span>{t("cart.buy")}</span>
                 </span>
               </button>
               <strong className={styles.price}>
@@ -230,8 +232,8 @@ const CartPage = () => {
                 type="button"
                 className={styles.removeBtn}
                 onClick={() => remove(item.id)}
-                aria-label="Удалить"
-                title="Удалить"
+                aria-label={t("cart.remove")}
+                title={t("cart.remove")}
               >
                 <Trash2 size={18} />
               </button>
@@ -244,19 +246,15 @@ const CartPage = () => {
             {error && <div className={styles.error}>{error}</div>}
 
             <div className={styles.sumRow}>
-              <span>
-                {productsWord(totalCount).charAt(0).toUpperCase() +
-                  productsWord(totalCount).slice(1)}
-                , {totalCount} шт.
-              </span>
+              <span>{t("cart.itemsCount", { count: totalCount })}</span>
               <strong>{format(totalPrice)}</strong>
             </div>
             <div className={styles.sumRow}>
-              <span>Сумма скидки</span>
+              <span>{t("cart.discount")}</span>
               <strong>{format(discount)}</strong>
             </div>
             <div className={`${styles.sumRow} ${styles.total}`}>
-              <span>Итого</span>
+              <span>{t("cart.total")}</span>
               <strong>{format(total)}</strong>
             </div>
 
@@ -266,7 +264,7 @@ const CartPage = () => {
               disabled={submitting}
               style={{ marginTop: 16 }}
             >
-              {submitting ? "Оформляем…" : "Оформить заказ"}
+              {submitting ? t("cart.processing") : t("cart.checkout")}
             </Button>
           </LayoutCard>
         </div>

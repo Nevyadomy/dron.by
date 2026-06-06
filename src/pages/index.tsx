@@ -9,6 +9,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/atoms/Button";
 import { SmartImage } from "@/components/atoms/SmartImage";
 import heroDrone from "@/assets/images/home/hero-drone.png";
@@ -22,150 +23,146 @@ import newsBeginner from "@/assets/images/news/news-beginner.jpg";
 import newsLaunch from "@/assets/images/news/news-launch.jpg";
 import s from "./index.module.css";
 
-const heroSlides = [
-  {
-    title: "Взгляните на мир с высоты",
-    text: "Профессиональные квадрокоптеры, FPV-дроны, аксессуары и запчасти. Официальная гарантия, доставка по Беларуси и сервисная поддержка пилотов любого уровня.",
-    cta: "В каталог",
-    to: "/catalog",
-    img: heroDrone,
-    alt: "Квадрокоптер DRON.BY",
-  },
-  {
-    title: "FPV-дроны для драйва и скорости",
-    text: "Готовые киты и компоненты для самостоятельной сборки: рамы, моторы, ELRS-приёмники и очки. Подберём конфигурацию под ваш стиль полётов.",
-    cta: "Смотреть FPV",
-    to: "/catalog?category=FPV-дроны",
-    img: heroFpv,
-    alt: "FPV-дрон",
-  },
-  {
-    title: "Кинематографичная съёмка с воздуха",
-    text: "Флагманские DJI Mavic 4 Pro, Air 3S и Autel EVO II Pro V3 — для съёмки в 4K/6K, профессиональных проектов и путешествий.",
-    cta: "Узнать больше об акциях",
-    to: "/promotions",
-    img: heroCinema,
-    alt: "Кинематографический дрон",
-  },
-];
-
-const advantages = [
-  {
-    icon: <Truck size={22} />,
-    title: "Бесплатная доставка от 300 BYN",
-    text: "По всей Беларуси курьером и почтой — быстро и безопасно.",
-    details:
-      "Доставляем заказы курьером по Минску в день оформления, по регионам — Европочтой и СДЭК за 1–3 дня. При заказе от 300 BYN доставка бесплатная. Возможен самовывоз из офиса на ул. Притыцкого, 79.",
-  },
-  {
-    icon: <ShieldCheck size={22} />,
-    title: "Официальная гарантия 12 месяцев",
-    text: "Сервисный центр в Минске и поддержка производителя.",
-    details:
-      "Все дроны и аксессуары — оригинальная продукция с официальной гарантией производителя 12 месяцев. Гарантийное и постгарантийное обслуживание выполняем в собственном сервисном центре, имеющем сертификацию DJI и Autel.",
-  },
-  {
-    icon: <Headphones size={22} />,
-    title: "Поддержка 24/7",
-    text: "Поможем выбрать дрон, настроить и подскажем по полётам.",
-    details:
-      "Консультанты на связи в чате, по телефону и e-mail в любое время суток. Подскажем, какую модель выбрать под ваши задачи, поможем настроить приложение, разобраться с режимами полёта и обновлениями прошивки.",
-  },
-  {
-    icon: <BadgeCheck size={22} />,
-    title: "Оригинальная продукция",
-    text: "Только сертифицированные DJI, Autel, Insta360, BetaFPV.",
-    details:
-      "Работаем напрямую с дистрибьюторами DJI, Autel Robotics, Insta360, GoPro, BetaFPV и PGYTECH. На каждый товар предоставляем чек, гарантийный талон и сертификат — это гарантирует подлинность и обновление по официальным каналам.",
-  },
-];
-
-const categories = [
-  {
-    kicker: "Популярное",
-    title: "Квадрокоптеры",
-    text: "Универсальные модели для аэросъёмки и путешествий: DJI Mini, Mavic, Air, Autel EVO.",
-    img: catQuad,
-    to: "/catalog?category=Квадрокоптеры",
-    details:
-      "В разделе представлены складные дроны DJI Mini 4 Pro и Mini 5, флагманы Mavic 3 Pro и Mavic 4 Pro, среднеразмерные Air 3S, а также Autel EVO Lite+ и EVO II Pro V3. Подберём комплект Fly More, расскажем о различиях сенсоров и режимов съёмки.",
-  },
-  {
-    kicker: "Новинки",
-    title: "FPV-дроны",
-    text: "Гоночные и кинематографические FPV: DJI Avata 2, BetaFPV Pavo20, готовые киты для пилотов.",
-    img: catFpv,
-    to: "/catalog?category=FPV-дроны",
-    details:
-      "Готовые киты для тех, кто только начинает (BetaFPV Cetus Pro, DJI Avata 2 Fly More), и компоненты для самостоятельной сборки: рамы, моторы, ESC, FC, VTX, ELRS-приёмники. Поможем подобрать конфигурацию под ваш стиль полётов.",
-  },
-  {
-    kicker: "В наличии",
-    title: "Аксессуары",
-    text: "Очки, пульты, аккумуляторы, ND-фильтры, кейсы — всё для комфортных полётов.",
-    img: catAcc,
-    to: "/catalog?category=Аксессуары",
-    details:
-      "DJI Goggles 3, RC 2 с экраном, контроллеры Motion 3, наборы ND-фильтров для Mavic и Air, посадочные площадки PGYTECH, водонепроницаемые кейсы и сумки-чехлы. Всё, что делает съёмку удобнее.",
-  },
-  {
-    kicker: "Сервис и ремонт",
-    title: "Запчасти",
-    text: "Оригинальные детали и расходники: пропеллеры, моторы, ESC, рамы и подвесы.",
-    img: catParts,
-    to: "/catalog?category=Запчасти",
-    details:
-      "Оригинальные пропеллеры DJI, моторы и ESC от T-Motor и BetaFPV, рамы для FPV-сборок, шлейфы, подвесы и заменяемые батареи. Всё в наличии — заменим деталь за 1 день в нашем сервисном центре.",
-  },
-];
-
-const reviews = [
-  {
-    text: "Заказывал DJI Mavic 3 — всё пришло за 2 дня, помогли с настройкой по телефону. Магазин рекомендую!",
-    name: "Алексей П.",
-    date: "Минск, 12.04.2026",
-  },
-  {
-    text: "Брала FPV-кит для сына, ребята помогли подобрать комплект под бюджет. Спасибо за индивидуальный подход.",
-    name: "Ольга К.",
-    date: "Гомель, 28.03.2026",
-  },
-  {
-    text: "Сервис на высоте: ремонт подвеса сделали за 3 дня, цена адекватная, дрон работает как новый.",
-    name: "Дмитрий М.",
-    date: "Минск, 05.03.2026",
-  },
-];
-
-const news = [
-  {
-    tag: "Гид",
-    title: "Как выбрать дрон для начинающих",
-    text: "Разбираемся в основных характеристиках: время полёта, камера, дальность связи. Что важно купить вместе с первым дроном.",
-    img: newsBeginner,
-    to: "/news",
-  },
-  {
-    tag: "Новинки",
-    title: "Новинки DJI 2025",
-    text: "Обзор представленных в этом году моделей DJI: ключевые отличия Mavic 4 Pro, Mini 5 и обновлённой линейки Osmo.",
-    img: newsLaunch,
-    to: "/news",
-  },
-];
-
 const HomePage = () => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [openAdv, setOpenAdv] = useState<number | null>(null);
   const [openCat, setOpenCat] = useState<number | null>(null);
   const [slide, setSlide] = useState(0);
+
+  const heroSlides = [
+    {
+      title: t("home.hero1Title"),
+      text: t("home.hero1Text"),
+      cta: t("home.hero1Cta"),
+      to: "/catalog",
+      img: heroDrone,
+      alt: t("home.hero1Alt"),
+    },
+    {
+      title: t("home.hero2Title"),
+      text: t("home.hero2Text"),
+      cta: t("home.hero2Cta"),
+      to: "/catalog?category=FPV-дроны",
+      img: heroFpv,
+      alt: t("home.hero2Alt"),
+    },
+    {
+      title: t("home.hero3Title"),
+      text: t("home.hero3Text"),
+      cta: t("home.hero3Cta"),
+      to: "/promotions",
+      img: heroCinema,
+      alt: t("home.hero3Alt"),
+    },
+  ];
+
+  const advantages = [
+    {
+      icon: <Truck size={22} />,
+      title: t("home.adv1Title"),
+      text: t("home.adv1Text"),
+      details: t("home.adv1Details"),
+    },
+    {
+      icon: <ShieldCheck size={22} />,
+      title: t("home.adv2Title"),
+      text: t("home.adv2Text"),
+      details: t("home.adv2Details"),
+    },
+    {
+      icon: <Headphones size={22} />,
+      title: t("home.adv3Title"),
+      text: t("home.adv3Text"),
+      details: t("home.adv3Details"),
+    },
+    {
+      icon: <BadgeCheck size={22} />,
+      title: t("home.adv4Title"),
+      text: t("home.adv4Text"),
+      details: t("home.adv4Details"),
+    },
+  ];
+
+  const categories = [
+    {
+      kicker: t("home.cat1Kicker"),
+      title: t("home.cat1Title"),
+      text: t("home.cat1Text"),
+      img: catQuad,
+      to: "/catalog?category=Квадрокоптеры",
+      details: t("home.cat1Details"),
+    },
+    {
+      kicker: t("home.cat2Kicker"),
+      title: t("home.cat2Title"),
+      text: t("home.cat2Text"),
+      img: catFpv,
+      to: "/catalog?category=FPV-дроны",
+      details: t("home.cat2Details"),
+    },
+    {
+      kicker: t("home.cat3Kicker"),
+      title: t("home.cat3Title"),
+      text: t("home.cat3Text"),
+      img: catAcc,
+      to: "/catalog?category=Аксессуары",
+      details: t("home.cat3Details"),
+    },
+    {
+      kicker: t("home.cat4Kicker"),
+      title: t("home.cat4Title"),
+      text: t("home.cat4Text"),
+      img: catParts,
+      to: "/catalog?category=Запчасти",
+      details: t("home.cat4Details"),
+    },
+  ];
+
+  const reviews = [
+    {
+      text: t("home.review1Text"),
+      name: t("home.review1Name"),
+      date: t("home.review1Date"),
+    },
+    {
+      text: t("home.review2Text"),
+      name: t("home.review2Name"),
+      date: t("home.review2Date"),
+    },
+    {
+      text: t("home.review3Text"),
+      name: t("home.review3Name"),
+      date: t("home.review3Date"),
+    },
+  ];
+
+  const news = [
+    {
+      tag: t("home.news1Tag"),
+      title: t("home.news1Title"),
+      text: t("home.news1Text"),
+      img: newsBeginner,
+      to: "/news",
+    },
+    {
+      tag: t("home.news2Tag"),
+      title: t("home.news2Title"),
+      text: t("home.news2Text"),
+      img: newsLaunch,
+      to: "/news",
+    },
+  ];
+
   const slidesCount = heroSlides.length;
+
   useEffect(() => {
     const id = window.setInterval(() => {
       setSlide((s) => (s + 1) % slidesCount);
     }, 6000);
     return () => window.clearInterval(id);
   }, [slidesCount]);
+
   const goPrev = () => setSlide((s) => (s - 1 + slidesCount) % slidesCount);
   const goNext = () => setSlide((s) => (s + 1) % slidesCount);
 
@@ -183,7 +180,7 @@ const HomePage = () => {
   const handleSubscribe = (e: FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
-    alert(`Спасибо! ${email} добавлен в рассылку.`);
+    alert(t("home.newsletterThanks", { email }));
     setEmail("");
   };
 
@@ -200,8 +197,8 @@ const HomePage = () => {
           type="button"
           className={`${s.heroArrow} ${s.heroArrowLeft}`}
           onClick={goPrev}
-          aria-label="Предыдущий слайд"
-          title="Предыдущий слайд"
+          aria-label={t("pagination.previousAria")}
+          title={t("pagination.previous")}
         >
           <ChevronLeft size={22} />
         </button>
@@ -235,8 +232,8 @@ const HomePage = () => {
           type="button"
           className={`${s.heroArrow} ${s.heroArrowRight}`}
           onClick={goNext}
-          aria-label="Следующий слайд"
-          title="Следующий слайд"
+          aria-label={t("pagination.nextAria")}
+          title={t("pagination.next")}
         >
           <ChevronRight size={22} />
         </button>
@@ -247,10 +244,10 @@ const HomePage = () => {
               type="button"
               className={`${s.heroDot} ${i === slide ? s.heroDotActive : ""}`}
               onClick={() => setSlide(i)}
-              aria-label={`Перейти к слайду ${i + 1}`}
+              aria-label={t("home.goToSlide", { number: i + 1 })}
               aria-selected={i === slide}
               role="tab"
-              title={`Слайд ${i + 1}`}
+              title={t("home.slideTitle", { number: i + 1 })}
             />
           ))}
         </div>
@@ -259,9 +256,9 @@ const HomePage = () => {
       {/* ADVANTAGES */}
       <section>
         <header className={s.sectionHead}>
-          <span className={s.kicker}>Почему мы</span>
-          <h2 className={s.sectionTitle}>Преимущества DRON.BY</h2>
-          <p className={s.sectionSub}>Всё, что важно для покупателя</p>
+          <span className={s.kicker}>{t("home.whyUs")}</span>
+          <h2 className={s.sectionTitle}>{t("home.advantagesTitle")}</h2>
+          <p className={s.sectionSub}>{t("home.advantagesSub")}</p>
         </header>
         <div className={s.advGrid}>
           {advantages.map((a, i) => (
@@ -273,7 +270,7 @@ const HomePage = () => {
                 size="sm"
                 onClick={() => setOpenAdv(openAdv === i ? null : i)}
               >
-                {openAdv === i ? "Свернуть" : "Подробнее"}
+                {openAdv === i ? t("home.collapse") : t("home.more")}
               </Button>
               {openAdv === i && <p className={s.advDetails}>{a.details}</p>}
             </div>
@@ -284,9 +281,9 @@ const HomePage = () => {
       {/* CATEGORIES */}
       <section>
         <header className={s.sectionHead}>
-          <span className={s.kicker}>Категории</span>
-          <h2 className={s.sectionTitle}>Каталог товаров</h2>
-          <p className={s.sectionSub}>Полный ассортимент для аэросъёмки</p>
+          <span className={s.kicker}>{t("home.categories")}</span>
+          <h2 className={s.sectionTitle}>{t("home.catalogTitle")}</h2>
+          <p className={s.sectionSub}>{t("home.catalogSub")}</p>
         </header>
         <div className={s.catList}>
           {categories.map((c, idx) => {
@@ -299,13 +296,13 @@ const HomePage = () => {
                 <p className={s.catText}>{c.text}</p>
                 <div className={s.catActions}>
                   <Link to={c.to}>
-                    <Button>Каталог</Button>
+                    <Button>{t("home.toCatalog")}</Button>
                   </Link>
                   <Button
                     variant="secondary"
                     onClick={() => setOpenCat(isOpen ? null : idx)}
                   >
-                    {isOpen ? "Свернуть" : "Подробнее"}
+                    {isOpen ? t("home.collapse") : t("home.more")}
                   </Button>
                 </div>
                 {isOpen && <p className={s.catDetails}>{c.details}</p>}
@@ -343,9 +340,9 @@ const HomePage = () => {
       {/* REVIEWS */}
       <section>
         <header className={s.sectionHead}>
-          <span className={s.kicker}>Отзывы</span>
-          <h2 className={s.sectionTitle}>Отзывы</h2>
-          <p className={s.sectionSub}>Что говорят наши клиенты</p>
+          <span className={s.kicker}>{t("home.reviews")}</span>
+          <h2 className={s.sectionTitle}>{t("home.reviews")}</h2>
+          <p className={s.sectionSub}>{t("home.reviewsSub")}</p>
         </header>
         <div className={s.revGrid}>
           {reviews.map((r) => (
@@ -377,9 +374,9 @@ const HomePage = () => {
       {/* NEWS */}
       <section>
         <header className={s.sectionHead}>
-          <span className={s.kicker}>Блог</span>
-          <h2 className={s.sectionTitle}>Новости и полезные советы</h2>
-          <p className={s.sectionSub}>Гиды, обзоры и анонсы</p>
+          <span className={s.kicker}>{t("home.blog")}</span>
+          <h2 className={s.sectionTitle}>{t("home.newsTitle")}</h2>
+          <p className={s.sectionSub}>{t("home.newsSub")}</p>
         </header>
         <div className={s.newsList}>
           {news.map((n) => (
@@ -396,7 +393,7 @@ const HomePage = () => {
                 <p className={s.newsText}>{n.text}</p>
                 <div className={s.newsActions}>
                   <Link to={n.to}>
-                    <Button size="sm">Читать далее</Button>
+                    <Button size="sm">{t("home.readMore")}</Button>
                   </Link>
                 </div>
               </div>
@@ -407,20 +404,18 @@ const HomePage = () => {
 
       {/* NEWSLETTER */}
       <section className={s.newsletter}>
-        <h2 className={s.sectionTitle}>Будьте в курсе новинок и акций</h2>
-        <p className={s.sectionSub}>
-          Подпишитесь на рассылку — без спама, только важное о дронах
-        </p>
+        <h2 className={s.sectionTitle}>{t("home.newsletterTitle")}</h2>
+        <p className={s.sectionSub}>{t("home.newsletterSub")}</p>
         <form className={s.newsletterForm} onSubmit={handleSubscribe}>
           <input
             type="email"
-            placeholder="Ваш e-mail"
+            placeholder={t("home.newsletterPlaceholder")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className={s.newsletterInput}
             required
           />
-          <Button type="submit">Подписаться</Button>
+          <Button type="submit">{t("home.newsletterSubscribe")}</Button>
         </form>
       </section>
     </div>

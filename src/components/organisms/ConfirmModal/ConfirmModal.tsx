@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/atoms/Button";
 import s from "./ConfirmModal.module.css";
 
@@ -15,14 +16,16 @@ export interface ConfirmModalProps {
 
 export const ConfirmModal = ({
   open,
-  title = "Подтвердите действие",
+  title,
   text,
-  confirmLabel = "Подтвердить",
-  cancelLabel = "Отмена",
+  confirmLabel,
+  cancelLabel,
   destructive,
   onConfirm,
   onCancel,
 }: ConfirmModalProps) => {
+  const { t } = useTranslation();
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -42,11 +45,11 @@ export const ConfirmModal = ({
       onClick={onCancel}
     >
       <div className={s.modal} onClick={(e) => e.stopPropagation()}>
-        <h2 className={s.title}>{title}</h2>
+        <h2 className={s.title}>{title ?? t("confirm.defaultTitle")}</h2>
         {text && <p className={s.text}>{text}</p>}
         <div className={s.actions}>
           <Button variant="secondary" type="button" onClick={onCancel}>
-            {cancelLabel}
+            {cancelLabel ?? t("common.cancel")}
           </Button>
           <Button
             type="button"
@@ -57,7 +60,7 @@ export const ConfirmModal = ({
                 : undefined
             }
           >
-            {confirmLabel}
+            {confirmLabel ?? t("common.confirm")}
           </Button>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Breadcrumbs } from "@/components/molecules/Breadcrumbs";
 import { LayoutCard } from "@/components/atoms/LayoutCard";
 import { Button } from "@/components/atoms/Button";
@@ -16,6 +17,7 @@ import s from "./checkout.module.css";
 
 const OFFICE_ADDRESS =
   "г. Минск, ул. Притыцкого, 156, офис 12 (пн–сб 10:00–20:00)";
+
 interface SavedCard {
   id: string;
   last4: string;
@@ -23,6 +25,7 @@ interface SavedCard {
   holder: string;
   brand: string;
 }
+
 function loadCards(userId: string | number): SavedCard[] {
   try {
     const raw = localStorage.getItem(`payment_cards_${userId}`);
@@ -31,6 +34,7 @@ function loadCards(userId: string | number): SavedCard[] {
     return [];
   }
 }
+
 function saveCards(userId: string | number, cards: SavedCard[]) {
   try {
     localStorage.setItem(`payment_cards_${userId}`, JSON.stringify(cards));
@@ -38,6 +42,7 @@ function saveCards(userId: string | number, cards: SavedCard[]) {
     /* ignore */
   }
 }
+
 function formatCardNum(v: string) {
   return v
     .replace(/\D/g, "")
@@ -45,11 +50,13 @@ function formatCardNum(v: string) {
     .replace(/(.{4})/g, "$1 ")
     .trim();
 }
+
 function formatExp(v: string) {
   const d = v.replace(/\D/g, "").slice(0, 4);
   if (d.length < 3) return d;
   return `${d.slice(0, 2)}/${d.slice(2)}`;
 }
+
 function detectBrand(num: string): string {
   const n = num.replace(/\s+/g, "");
   if (/^4/.test(n)) return "Visa";
@@ -60,6 +67,7 @@ function detectBrand(num: string): string {
 }
 
 const CheckoutPage = () => {
+  const { t } = useTranslation();
   const { state, remove, clear } = useCart();
   const { user } = useAuth();
   const { format } = useCurrency();
@@ -80,20 +88,19 @@ const CheckoutPage = () => {
       quantity: 1,
     };
   }, [buyNowId]);
-  // Cart items vs single buy-now item
+
   const items = buyNowItem ? [buyNowItem] : state.items;
   const [done, setDone] = useState(false);
-  useEffect(() => {
-    document.title = "Оформление заказа | DRON.BY";
-  }, []);
 
-  // Buyer fields
+  useEffect(() => {
+    document.title = `${t("checkout.title")} | DRON.BY`;
+  }, [t]);
+
   const [name, setName] = useState(user?.name ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
   const [phone, setPhone] = useState(user?.phone ?? "");
   const [comment, setComment] = useState("");
 
-  // Payment
   const [payment, setPayment] = useState<"card" | "cash">("card");
   const [cards, setCards] = useState<SavedCard[]>(() =>
     user?.id ? loadCards(user.id) : [],
@@ -107,7 +114,7 @@ const CheckoutPage = () => {
   const [cardExp, setCardExp] = useState("");
   const [cardCvv, setCardCvv] = useState("");
   const [cardHolder, setCardHolder] = useState("");
-  // Delivery
+
   const [delivery, setDelivery] = useState<"pickup" | "courier">("pickup");
   const [address, setAddress] = useState("");
 
@@ -129,34 +136,39 @@ const CheckoutPage = () => {
 
   const validate = () => {
     const e: Record<string, string> = {};
-    if (name.trim().length < 2) e.name = "Укажите имя";
+    if (name.trim().length < 2) e.name = t("checkout.nameRequired");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-      e.email = "Некорректный email";
+      e.email = t("checkout.emailInvalid");
     if (!phone || phone.replace(/\D/g, "").length < 7)
-      e.phone = "Укажите телефон";
+      e.phone = t("checkout.phoneRequired");
     if (delivery === "courier" && address.trim().length < 5)
-      e.address = "Укажите адрес доставки";
+      e.address = t("checkout.addressRequired");
     if (payment === "card") {
       if (showCardForm || cards.length === 0) {
         const clean = cardNum.replace(/\s+/g, "");
-        if (!/^\d{13,19}$/.test(clean)) e.cardNum = "13–19 цифр";
-        if (!/^\d{2}\/\d{2}$/.test(cardExp)) e.cardExp = "MM/YY";
+        if (!/^\d{13,19}$/.test(clean))
+          e.cardNum = t("checkout.cardNumInvalid");
+        if (!/^\d{2}\/\d{2}$/.test(cardExp))
+          e.cardExp = t("checkout.cardExpInvalid");
         else {
           const [mm, yy] = cardExp.split("/").map((x) => parseInt(x, 10));
           const now = new Date();
           const cy = now.getFullYear() % 100,
             cm = now.getMonth() + 1;
-          if (mm < 1 || mm > 12) e.cardExp = "Месяц 01–12";
-          else if (yy < cy || (yy === cy && mm < cm)) e.cardExp = "Срок истёк";
+          if (mm < 1 || mm > 12) e.cardExp = t("checkout.cardExpMonth");
+          else if (yy < cy || (yy === cy && mm < cm))
+            e.cardExp = t("checkout.cardExpired");
         }
-        if (!/^\d{3,4}$/.test(cardCvv)) e.cardCvv = "3–4 цифры";
-        if (cardHolder.trim().length < 2) e.cardHolder = "Имя держателя";
+        if (!/^\d{3,4}$/.test(cardCvv))
+          e.cardCvv = t("checkout.cardCvvInvalid");
+        if (cardHolder.trim().length < 2)
+          e.cardHolder = t("checkout.cardHolderRequired");
       } else if (!selectedCardId) {
-        e.card = "Выберите карту";
+        e.card = t("checkout.cardRequired");
       }
     }
 
-    if (!consent) e.consent = "Подтвердите согласие";
+    if (!consent) e.consent = t("checkout.consentRequired");
     return e;
   };
 
@@ -176,7 +188,6 @@ const CheckoutPage = () => {
       if (showCardForm || cards.length === 0) {
         const clean = cardNum.replace(/\s+/g, "");
         cardLast4 = clean.slice(-4);
-        // Persist new card
         if (user?.id) {
           const card: SavedCard = {
             id: `${Date.now()}`,
@@ -224,7 +235,7 @@ const CheckoutPage = () => {
       setTimeout(() => navigate("/"), 2000);
     } catch (err) {
       setServerError(
-        err instanceof Error ? err.message : "Не удалось оформить заказ.",
+        err instanceof Error ? err.message : t("checkout.submitError"),
       );
     } finally {
       setSubmitting(false);
@@ -236,18 +247,16 @@ const CheckoutPage = () => {
       <div className="page-container">
         <Breadcrumbs
           items={[
-            { label: "Главная", to: "/" },
-            { label: "Корзина", to: "/cart" },
-            { label: "Оформление" },
+            { label: t("breadcrumbs.home"), to: "/" },
+            { label: t("cart.title"), to: "/cart" },
+            { label: t("checkout.title") },
           ]}
         />
         <div className={s.centered}>
           <LayoutCard padded>
-            <p className={s.success}>
-              Заказ оформлен! Перенаправляем на главную…
-            </p>
+            <p className={s.success}>{t("checkout.success")}</p>
             <Link to="/catalog">
-              <Button>Перейти в каталог</Button>
+              <Button>{t("cart.goToCatalog")}</Button>
             </Link>
           </LayoutCard>
         </div>
@@ -257,20 +266,19 @@ const CheckoutPage = () => {
 
   return (
     <div className="page-container">
-      <h1 style={{ fontSize: 24, fontWeight: 700 }}>Оформление заказа</h1>
+      <h1 style={{ fontSize: 24, fontWeight: 700 }}>{t("checkout.title")}</h1>
       <Breadcrumbs
         items={[
-          { label: "Главная", to: "/" },
-          { label: "Корзина", to: "/cart" },
-          { label: "Оформление" },
+          { label: t("breadcrumbs.home"), to: "/" },
+          { label: t("cart.title"), to: "/cart" },
+          { label: t("checkout.title") },
         ]}
       />
 
       <div className={s.centered}>
         <form className={s.formCard} onSubmit={onSubmit}>
           <LayoutCard className={s.section}>
-            {/* 1. Items */}
-            <h2 className={s.h2}>Состав заказа</h2>
+            <h2 className={s.h2}>{t("checkout.orderComposition")}</h2>
             {items.map((i) => (
               <div key={i.id} className={s.item}>
                 <div className={s.thumb}>
@@ -282,17 +290,18 @@ const CheckoutPage = () => {
                 </div>
                 <div>
                   <div className={s.title}>{i.title}</div>
-                  <div className={s.meta}>{i.quantity} шт.</div>
+                  <div className={s.meta}>
+                    {i.quantity} {t("checkout.pieces")}
+                  </div>
                 </div>
                 <div className={s.price}>{format(i.price * i.quantity)}</div>
               </div>
             ))}
 
-            {/* 2. Buyer */}
-            <h2 className={s.h2}>Данные покупателя</h2>
+            <h2 className={s.h2}>{t("checkout.buyerData")}</h2>
             <div className={s.fields}>
               <label className={s.field}>
-                <span className={s.label}>Имя</span>
+                <span className={s.label}>{t("checkout.name")}</span>
                 <input
                   className={cn(s.input, errors.name && s.inputError)}
                   value={name}
@@ -301,7 +310,7 @@ const CheckoutPage = () => {
                 {errors.name && <span className={s.err}>{errors.name}</span>}
               </label>
               <label className={s.field}>
-                <span className={s.label}>Email</span>
+                <span className={s.label}>{t("checkout.email")}</span>
                 <input
                   className={cn(s.input, errors.email && s.inputError)}
                   type="email"
@@ -311,7 +320,7 @@ const CheckoutPage = () => {
                 {errors.email && <span className={s.err}>{errors.email}</span>}
               </label>
               <label className={s.field}>
-                <span className={s.label}>Телефон</span>
+                <span className={s.label}>{t("checkout.phone")}</span>
                 <input
                   className={cn(s.input, errors.phone && s.inputError)}
                   value={phone}
@@ -321,19 +330,18 @@ const CheckoutPage = () => {
                 {errors.phone && <span className={s.err}>{errors.phone}</span>}
               </label>
               <label className={s.field}>
-                <span className={s.label}>Комментарий к заказу</span>
+                <span className={s.label}>{t("checkout.comment")}</span>
                 <textarea
                   className={s.textarea}
                   rows={3}
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                  placeholder="Опционально"
+                  placeholder={t("checkout.commentPlaceholder")}
                 />
               </label>
             </div>
 
-            {/* 3. Payment */}
-            <h2 className={s.h2}>Оплата</h2>
+            <h2 className={s.h2}>{t("checkout.payment")}</h2>
             <div className={s.radioGroup}>
               <label className={s.radioLabel}>
                 <input
@@ -343,7 +351,7 @@ const CheckoutPage = () => {
                   checked={payment === "card"}
                   onChange={() => setPayment("card")}
                 />
-                <span>Картой онлайн</span>
+                <span>{t("checkout.paymentCard")}</span>
               </label>
               <label className={s.radioLabel}>
                 <input
@@ -353,7 +361,7 @@ const CheckoutPage = () => {
                   checked={payment === "cash"}
                   onChange={() => setPayment("cash")}
                 />
-                <span>При получении</span>
+                <span>{t("checkout.paymentCash")}</span>
               </label>
             </div>
 
@@ -361,7 +369,7 @@ const CheckoutPage = () => {
               <div className={s.paymentBlock}>
                 {cards.length > 0 && !showCardForm && (
                   <>
-                    <p className={s.hint}>Выберите карту:</p>
+                    <p className={s.hint}>{t("checkout.selectCard")}</p>
                     <div className={s.cardList}>
                       {cards.map((c) => (
                         <label
@@ -389,7 +397,7 @@ const CheckoutPage = () => {
                       className={s.linkBtn}
                       onClick={() => setShowCardForm(true)}
                     >
-                      + Добавить новую карту
+                      + {t("checkout.addNewCard")}
                     </button>
                   </>
                 )}
@@ -397,12 +405,14 @@ const CheckoutPage = () => {
                   <div className={s.cardForm}>
                     <p className={s.hint}>
                       {cards.length === 0
-                        ? "Добавьте карту для оплаты:"
-                        : "Новая карта:"}
+                        ? t("checkout.addCardForPayment")
+                        : t("checkout.newCard")}
                     </p>
                     <div className={s.cardGrid}>
                       <label className={cn(s.field, s.fullField)}>
-                        <span className={s.label}>Номер карты</span>
+                        <span className={s.label}>
+                          {t("checkout.cardNumber")}
+                        </span>
                         <input
                           className={cn(
                             s.input,
@@ -420,7 +430,9 @@ const CheckoutPage = () => {
                         )}
                       </label>
                       <label className={s.field}>
-                        <span className={s.label}>Срок MM/YY</span>
+                        <span className={s.label}>
+                          {t("checkout.cardExpiry")}
+                        </span>
                         <input
                           className={cn(
                             s.input,
@@ -438,7 +450,7 @@ const CheckoutPage = () => {
                         )}
                       </label>
                       <label className={s.field}>
-                        <span className={s.label}>CVV</span>
+                        <span className={s.label}>{t("checkout.cardCvv")}</span>
                         <input
                           className={cn(
                             s.input,
@@ -457,7 +469,9 @@ const CheckoutPage = () => {
                         )}
                       </label>
                       <label className={cn(s.field, s.fullField)}>
-                        <span className={s.label}>Имя держателя</span>
+                        <span className={s.label}>
+                          {t("checkout.cardHolder")}
+                        </span>
                         <input
                           className={cn(
                             s.input,
@@ -486,25 +500,19 @@ const CheckoutPage = () => {
                           setCardHolder("");
                         }}
                       >
-                        Использовать сохранённую карту
+                        {t("checkout.useSavedCard")}
                       </button>
                     )}
                   </div>
                 )}
-                <p className={s.hint}>
-                  После подтверждения вы будете перенаправлены на безопасную
-                  платёжную страницу банка.
-                </p>
+                <p className={s.hint}>{t("checkout.cardSecureNotice")}</p>
               </div>
             )}
             {payment === "cash" && (
-              <p className={s.hint}>
-                Оплата наличными или картой при получении товара.
-              </p>
+              <p className={s.hint}>{t("checkout.cashOnDelivery")}</p>
             )}
 
-            {/* 4. Delivery */}
-            <h2 className={s.h2}>Доставка</h2>
+            <h2 className={s.h2}>{t("checkout.delivery")}</h2>
             <div className={s.radioGroup}>
               <label className={s.radioLabel}>
                 <input
@@ -514,7 +522,7 @@ const CheckoutPage = () => {
                   checked={delivery === "pickup"}
                   onChange={() => setDelivery("pickup")}
                 />
-                <span>Самовывоз</span>
+                <span>{t("checkout.deliveryPickup")}</span>
               </label>
               <label className={s.radioLabel}>
                 <input
@@ -524,21 +532,21 @@ const CheckoutPage = () => {
                   checked={delivery === "courier"}
                   onChange={() => setDelivery("courier")}
                 />
-                <span>Курьер</span>
+                <span>{t("checkout.deliveryCourier")}</span>
               </label>
             </div>
             {delivery === "pickup" ? (
               <div className={s.officeBox}>
-                <strong>Пункт выдачи:</strong> {OFFICE_ADDRESS}
+                <strong>{t("checkout.pickupPoint")}:</strong> {OFFICE_ADDRESS}
               </div>
             ) : (
               <label className={s.field}>
-                <span className={s.label}>Адрес доставки</span>
+                <span className={s.label}>{t("checkout.courierAddress")}</span>
                 <input
                   className={cn(s.input, errors.address && s.inputError)}
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  placeholder="Город, улица, дом, кв."
+                  placeholder={t("checkout.courierAddressPlaceholder")}
                 />
                 {errors.address && (
                   <span className={s.err}>{errors.address}</span>
@@ -546,20 +554,19 @@ const CheckoutPage = () => {
               </label>
             )}
 
-            {/* 5. Totals */}
-            <h2 className={s.h2}>Итого</h2>
+            <h2 className={s.h2}>{t("checkout.total")}</h2>
             <div className={s.sumRow}>
-              <span>Товары</span>
+              <span>{t("checkout.products")}</span>
               <strong>{format(totalPrice)}</strong>
             </div>
             {discount > 0 && (
               <div className={s.sumRow}>
-                <span>Скидка</span>
+                <span>{t("cart.discount")}</span>
                 <strong>−{format(discount)}</strong>
               </div>
             )}
             <div className={cn(s.sumRow, s.total)}>
-              <span>К оплате</span>
+              <span>{t("checkout.totalAmount")}</span>
               <strong>{format(total)}</strong>
             </div>
             <label className={s.consent}>
@@ -570,13 +577,13 @@ const CheckoutPage = () => {
                 onChange={(e) => setConsent(e.target.checked)}
               />
               <span>
-                Соглашаюсь с{" "}
+                {t("checkout.consentText")}{" "}
                 <a href="/docs/terms-of-use.pdf">
-                  правилами пользования торговой площадкой
+                  {t("checkout.marketplaceRules")}
                 </a>{" "}
-                и{" "}
+                {t("checkout.and")}{" "}
                 <a href="https://belpotreb.by/zakon-o-zashhite-prav-potrebitelej/statya-28/">
-                  возврата
+                  {t("checkout.returnsPolicy")}
                 </a>
                 .
               </span>
@@ -590,7 +597,7 @@ const CheckoutPage = () => {
               disabled={submitting}
               style={{ marginTop: 12 }}
             >
-              {submitting ? "Отправляем…" : "Подтвердить заказ"}
+              {submitting ? t("checkout.submitting") : t("checkout.submit")}
             </Button>
           </LayoutCard>
         </form>

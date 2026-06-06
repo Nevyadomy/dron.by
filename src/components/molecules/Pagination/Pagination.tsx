@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { cn } from "@/utils/cn";
 import styles from "./Pagination.module.css";
 
@@ -31,20 +32,21 @@ function buildPages(page: number, total: number): (number | "...")[] {
 }
 
 export const Pagination = ({ page, totalPages, onChange }: PaginationProps) => {
+  const { t } = useTranslation();
   if (totalPages <= 1) return null;
   const pages = buildPages(page, totalPages);
 
   return (
-    <nav className={styles.nav} aria-label="Пагинация">
+    <nav className={styles.nav} aria-label={t("pagination.ariaLabel")}>
       <button
         type="button"
         className={styles.btn}
         onClick={() => onChange(page - 1)}
         disabled={page <= 1}
-        aria-label="Предыдущая страница"
+        aria-label={t("pagination.previousAria")}
       >
         <ChevronLeft size={16} />
-        <span className={styles.btnLabel}>Назад</span>
+        <span className={styles.btnLabel}>{t("pagination.previous")}</span>
       </button>
 
       <ul className={styles.list}>
@@ -73,9 +75,9 @@ export const Pagination = ({ page, totalPages, onChange }: PaginationProps) => {
         className={styles.btn}
         onClick={() => onChange(page + 1)}
         disabled={page >= totalPages}
-        aria-label="Следующая страница"
+        aria-label={t("pagination.nextAria")}
       >
-        <span className={styles.btnLabel}>Вперёд</span>
+        <span className={styles.btnLabel}>{t("pagination.next")}</span>
         <ChevronRight size={16} />
       </button>
     </nav>

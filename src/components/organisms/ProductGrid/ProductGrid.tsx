@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { ProductCard } from "@/components/molecules/ProductCard";
 import { SkeletonCard } from "@/components/molecules/SkeletonCard";
 import type { Product } from "@/schemas/product.schema";
@@ -16,6 +17,8 @@ export const ProductGrid = ({
   error,
   skeletonCount = 20,
 }: ProductGridProps) => {
+  const { t } = useTranslation();
+
   if (isLoading) {
     return (
       <div className={styles.grid}>
@@ -28,7 +31,7 @@ export const ProductGrid = ({
   if (error) {
     return (
       <div className={styles.empty}>
-        <p>Ошибка загрузки</p>
+        <p>{t("productGrid.error")}</p>
         <p>{error}</p>
       </div>
     );
@@ -36,8 +39,8 @@ export const ProductGrid = ({
   if (products.length === 0) {
     return (
       <div className={styles.empty}>
-        <p>Ничего не найдено</p>
-        <p>Попробуйте изменить параметры фильтрации</p>
+        <p>{t("productGrid.notFound")}</p>
+        <p>{t("productGrid.notFoundHint")}</p>
       </div>
     );
   }
