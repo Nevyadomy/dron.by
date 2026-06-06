@@ -5,7 +5,7 @@ import { Button } from "@/components/atoms/Button";
 import { Input } from "@/components/atoms/Input";
 import { LayoutCard } from "@/components/atoms/LayoutCard";
 import { FormField } from "@/components/molecules/FormField";
-import { useAuth } from "@/contexts/useAuthPrompt";
+import { useAuth } from "@/contexts/useAuth";
 import { registrationSchema } from "@/schemas/registration.schema";
 import { registerUser } from "@/services/userStorage";
 import { OAuthRow } from "@/components/atoms/OAuthButtons";
