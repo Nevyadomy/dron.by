@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import { ToastContext } from "@/contexts/ToastContext";
 import s from "./Toast.module.css";
 import { cn } from "@/utils/cn";
+import { useTranslation } from "react-i18next";
 
 interface ToastItem {
   id: number;
@@ -16,6 +17,7 @@ interface ToastItem {
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<ToastItem[]>([]);
+  const { t } = useTranslation();
 
   const show = useCallback((t: Omit<ToastItem, "id">) => {
     setItems((prev) => [...prev, { ...t, id: Date.now() + Math.random() }]);
@@ -52,7 +54,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             <button
               type="button"
               className={s.close}
-              aria-label="Закрыть"
+              aria-label={t("common.close")}
               onClick={() => setItems((p) => p.filter((x) => x.id !== it.id))}
             >
               <X size={14} />

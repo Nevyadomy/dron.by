@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import s from "./Lightbox.module.css";
+import { useTranslation } from "react-i18next";
 
 export interface LightboxProps {
   src: string;
@@ -10,6 +11,7 @@ export interface LightboxProps {
 }
 
 export const Lightbox = ({ src, alt, onClose }: LightboxProps) => {
+  const { t } = useTranslation();
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -39,8 +41,8 @@ export const Lightbox = ({ src, alt, onClose }: LightboxProps) => {
         type="button"
         className={s.close}
         onClick={onClose}
-        aria-label="Закрыть"
-        title="Закрыть"
+        aria-label={t("common.close")}
+        title={t("common.close")}
       >
         <X size={22} />
       </button>

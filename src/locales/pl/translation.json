@@ -55,6 +55,12 @@
     "docComing": "Dokument będzie wkrótce dostępny",
     "copyright": "Copyright © 2026 | „DRON.BY” — sklep z quadrokopterami i akcesoriami"
   },
+  "rating": {
+    "aria_label": "Ocena {{value}} na {{max}}",
+    "count": "{{count}} ocena",
+    "count_plural": "{{count}} oceny",
+    "count_plural_2": "{{count}} ocen"
+  },
   "common": {
     "buy": "Kup",
     "addToCart": "Do koszyka",
@@ -66,7 +72,8 @@
     "cancel": "Anuluj",
     "delete": "Usuń",
     "confirm": "Potwierdź",
-    "back": "Wstecz"
+    "back": "Wstecz",
+    "close": "Zamknij"
   },
   "breadcrumbs": { "home": "Strona główna" },
   "spec": {

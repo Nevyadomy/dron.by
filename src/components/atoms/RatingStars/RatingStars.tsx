@@ -1,6 +1,7 @@
 import { Star } from "lucide-react";
 import { cn } from "@/utils/cn";
 import styles from "./RatingStars.module.css";
+import { useTranslation } from "react-i18next";
 
 export interface RatingStarsProps {
   value: number;
@@ -22,13 +23,14 @@ export const RatingStars = ({
   showValue = false,
   className,
 }: RatingStarsProps) => {
+  const { t } = useTranslation();
   const clamped = Math.max(0, Math.min(max, value));
   const pct = (clamped / max) * 100;
 
   return (
     <span
       className={cn(styles.wrap, className)}
-      aria-label={`Рейтинг ${clamped.toFixed(1)} из ${max}`}
+      aria-label={t("rating.aria_label", { value: clamped.toFixed(1), max })}
     >
       <span
         className={styles.stack}

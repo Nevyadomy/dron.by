@@ -55,6 +55,12 @@
     "docComing": "Документ скоро будет доступен",
     "copyright": "Copyright © 2026 | \"DRON.BY\" — магазин квадрокоптеров и аксессуаров"
   },
+  "rating": {
+    "aria_label": "Рейтинг {{value}} из {{max}}",
+    "count": "{{count}} оценка",
+    "count_plural": "{{count}} оценки",
+    "count_plural_2": "{{count}} оценок"
+  },
   "common": {
     "buy": "Купить",
     "addToCart": "В корзину",
@@ -66,7 +72,8 @@
     "cancel": "Отмена",
     "delete": "Удалить",
     "confirm": "Подтвердить",
-    "back": "Назад"
+    "back": "Назад",
+    "close": "Закрыть"
   },
   "breadcrumbs": { "home": "Главная" },
   "spec": {

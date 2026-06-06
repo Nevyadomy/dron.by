@@ -55,6 +55,11 @@
     "docComing": "Document will be available soon",
     "copyright": "Copyright © 2026 | \"DRON.BY\" — quadcopter and accessory shop"
   },
+  "rating": {
+    "aria_label": "Rating {{value}} out of {{max}}",
+    "count": "{{count}} rating",
+    "count_plural": "{{count}} ratings"
+  },
   "common": {
     "buy": "Buy",
     "addToCart": "Add to cart",
@@ -66,7 +71,8 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "confirm": "Confirm",
-    "back": "Back"
+    "back": "Back",
+    "close": "Close"
   },
   "breadcrumbs": { "home": "Home" },
   "spec": {
