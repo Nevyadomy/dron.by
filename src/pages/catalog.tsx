@@ -35,23 +35,28 @@ const sortOptions = [
 const CatalogPage = () => {
   const { t } = useTranslation();
   const [params, setParams] = useSearchParams();
-  const { format } = useCurrency();
+  const { formatString } = useCurrency();
+
   const priceRanges: PriceRange[] = useMemo(
     () =>
       PRICE_BOUNDS.map((b) => {
         let label: string;
         if (b.min === 0)
-          label = t("catalog.upTo", { price: format(b.max, { decimals: 0 }) });
+          label = t("catalog.upTo", {
+            price: formatString(b.max, { decimals: 0 }),
+          });
         else if (b.max === Infinity)
-          label = t("catalog.over", { price: format(b.min, { decimals: 0 }) });
+          label = t("catalog.over", {
+            price: formatString(b.min, { decimals: 0 }),
+          });
         else
           label = t("catalog.range", {
-            min: format(b.min, { decimals: 0 }),
-            max: format(b.max, { decimals: 0 }),
+            min: formatString(b.min, { decimals: 0 }),
+            max: formatString(b.max, { decimals: 0 }),
           });
         return { label, min: b.min, max: b.max };
       }),
-    [format, t],
+    [formatString, t],
   );
   const search = params.get("q") ?? "";
   const [searchInput, setSearchInput] = useState(search);
@@ -80,6 +85,7 @@ const CatalogPage = () => {
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
+
   const page = Math.max(1, parseInt(params.get("page") ?? "1", 10) || 1);
 
   const productsQuery = useQuery({
@@ -160,6 +166,7 @@ const CatalogPage = () => {
     pageSize,
   ].join("§");
   const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
+
   if (prevFilterKey !== filterKey) {
     setPrevFilterKey(filterKey);
     if (params.get("page")) {

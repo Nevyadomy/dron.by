@@ -128,7 +128,7 @@
 
 .searchBtn {
   position: absolute;
-  right: 4px;
+  right: 14px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
@@ -427,7 +427,7 @@
     z-index: 60;
     background: var(--color-card);
     border-bottom: 1px solid var(--color-border);
-    padding: 10px 0;
+    padding: 10px 10px;
     max-width: none;
   }
   .search.searchOpen { display: flex; }
@@ -435,4 +435,56 @@
 @media (max-width: 480px) {
   .inner { gap: 8px; padding: 10px 12px; }
   .logo img { height: 36px; }
+}
+
+/* ===== ПО УМОЛЧАНИЮ (десктоп) ===== */
+.searchIcon {
+  display: none;  /* скрываем кнопку поиска в actions на десктопе */
+}
+
+/* ===== ПЛАНШЕТЫ (769px - 1024px) ===== */
+@media (min-width: 769px) and (max-width: 1024px) {
+  /* Скрываем поле поиска */
+  .search {
+    display: none;
+  }
+  
+  /* Показываем actions (на телефонах они скрыты) */
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  /* Скрываем mobileTools на планшетах (они только для телефонов) */
+  .mobileTools {
+    display: none;
+  }
+  
+  /* Показываем кнопку поиска в actions */
+  .searchIcon {
+    display: flex;
+  }
+  
+  /* Раскрывающееся поле поиска при клике */
+  .search.searchOpen {
+    display: flex;
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    top: 100%;
+    z-index: 60;
+    background: var(--color-card);
+    border-bottom: 1px solid var(--color-border);
+    padding: 10px;
+    max-width: none;
+  }
+}
+
+/* ===== ТЕЛЕФОНЫ (до 768px) ===== */
+@media (max-width: 768px) {
+  /* Кнопка поиска в actions не нужна (она есть в mobileTools) */
+  .searchIcon {
+    display: none;
+  }
 }

@@ -1524,22 +1524,18 @@ const range = (
   return v;
 };
 const bool = (id: number, salt: number, p = 0.5): boolean => rng(id, salt) < p;
-const COLORS = [
-  "Серый",
-  "Чёрный",
-  "Белый",
-  "Тёмно-синий",
-  "Серебристый",
-  "Графитовый",
-];
+const COLORS = ["gray", "black", "white", "darkBlue", "silver", "graphite"];
+
 const SENSORS_DRONE = [
-  '1/1.3" CMOS',
-  '1" CMOS Sony',
-  '1/2" CMOS',
-  "4/3 CMOS Hasselblad",
-  '1/1.7" CMOS',
+  "cmos_1_1_3",
+  "cmos_1",
+  "cmos_1_2_3",
+  "cmos_4_3",
+  "cmos_1_1_7",
 ];
-const SENSORS_FPV = ['1/1.7" CMOS', '1/2" CMOS', '1/2.3" CMOS'];
+
+const SENSORS_FPV = ["cmos_1_1_7", "cmos_1_2_3", "cmos_2_3"];
+
 const CAM_DRONE = [
   "4K/30fps",
   "4K/60fps HDR",
@@ -1547,28 +1543,34 @@ const CAM_DRONE = [
   "6K/30fps",
   "4K/100fps",
 ];
+
 const CAM_FPV = ["4K/60fps", "2.7K/120fps", "1080p/120fps", "4K/100fps"];
+
 const FPV_PROTO = [
-  "DJI O3",
-  "DJI O4",
-  "ELRS 2.4 ГГц",
-  "Walksnail Avatar",
-  "Caddx Vista",
+  "dji_o3",
+  "dji_o4",
+  "elrs_24",
+  "walksnail_avatar",
+  "caddx_vista",
 ];
+
 const STORAGE_TEMP = [
   "-10°C до 40°C",
   "-5°C до 40°C",
   "-15°C до 45°C",
   "0°C до 40°C",
 ];
-const RC_TYPES = ["в комплекте", "RC 2 с экраном", "RC-N3", "LiteRadio 3"];
+
+const RC_TYPES = ["included", "rc_2_screen", "rc_n3", "lite_radio_3"];
+
 const MATERIALS = [
-  "Композит / алюминий",
-  "ABS-пластик",
-  "Карбон",
-  "Алюминиевый сплав",
-  "Поликарбонат",
+  "composite",
+  "plastic",
+  "carbon",
+  "aluminum",
+  "polycarbonate",
 ];
+
 const ACC_COMPAT_POOL = [
   ["DJI Mini 3", "DJI Mini 4"],
   ["DJI Air 3", "DJI Air 3S"],
@@ -1591,7 +1593,7 @@ function defaultSpecFor(p: Product): ProductSpecs {
     const spec: FpvSpecs = {
       ...base,
       weight: range(id, 10, 180, 600, 10),
-      dimensions: `${range(id, 11, 140, 220, 5)}×${range(id, 12, 140, 220, 5)}×${range(id, 13, 60, 110, 5)} мм`,
+      dimensions: `${range(id, 11, 140, 220, 5)}×${range(id, 12, 140, 220, 5)}×${range(id, 13, 60, 110, 5)}`,
       flightTime: range(id, 14, 6, 25),
       maxSpeed: range(id, 15, 90, 180, 5),
       maxFlightDistance: range(id, 16, 2000, 12000, 500),
@@ -1618,7 +1620,7 @@ function defaultSpecFor(p: Product): ProductSpecs {
     const spec: DroneSpecs = {
       ...base,
       weight: range(id, 40, 135, 1000, 5),
-      dimensions: `${range(id, 41, 150, 320, 5)}×${range(id, 42, 110, 280, 5)}×${range(id, 43, 60, 130, 5)} мм`,
+      dimensions: `${range(id, 41, 150, 320, 5)}×${range(id, 42, 110, 280, 5)}×${range(id, 43, 60, 130, 5)}`,
       flightTime: range(id, 44, 18, 46),
       maxSpeed: range(id, 45, 40, 90, 1),
       maxFlightDistance: range(id, 46, 5000, 25000, 500),
@@ -1642,7 +1644,7 @@ function defaultSpecFor(p: Product): ProductSpecs {
   const accSpec: AccessorySpecs = {
     ...base,
     weight: range(id, 60, 20, 600, 5),
-    dimensions: `${range(id, 61, 40, 200, 5)}×${range(id, 62, 30, 160, 5)}×${range(id, 63, 5, 80, 5)} мм`,
+    dimensions: `${range(id, 61, 40, 200, 5)}×${range(id, 62, 30, 160, 5)}×${range(id, 63, 5, 80, 5)}`,
     compatibleModels: pick(id, 64, ACC_COMPAT_POOL),
     material: pick(id, 65, MATERIALS),
   };

@@ -2,6 +2,7 @@
   background: var(--color-footer-bg);
   color: var(--color-footer-fg);
   margin-top: 48px;
+  z-index: 10;
 }
 .inner {
   max-width: var(--max-width);

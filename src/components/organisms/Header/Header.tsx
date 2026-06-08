@@ -86,6 +86,21 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
     document.addEventListener("mousedown", onClick);
     return () => document.removeEventListener("mousedown", onClick);
   }, [suggestOpen]);
+
+  // Закрытие поля поиска при клике вне формы (для планшетов)
+  useEffect(() => {
+    if (!mobileSearchOpen) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setMobileSearchOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [mobileSearchOpen]);
+
   const trimmed = localQuery.trim();
   const suggestions = useMemo(() => {
     if (!trimmed)
@@ -289,6 +304,15 @@ export const Header = ({ searchQuery = "" }: HeaderProps) => {
 
         <div className={styles.actions}>
           <LanguageSwitcher />
+          <button
+            type="button"
+            className={cn(styles.iconBtn, styles.searchIcon)}
+            onClick={() => setMobileSearchOpen((v) => !v)}
+            aria-label={t("header.find")}
+            title={t("header.find")}
+          >
+            <Search size={20} />
+          </button>
           <button
             type="button"
             className={cn(styles.iconBtn, styles.themeBtn)}

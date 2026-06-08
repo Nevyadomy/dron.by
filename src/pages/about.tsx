@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import useEmblaCarousel from "embla-carousel-react";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Breadcrumbs } from "@/components/molecules/Breadcrumbs";
 import { Lightbox } from "@/components/organisms/Lightbox";
 import { useReveal } from "@/hooks/useReveal";
 import { cn } from "@/utils/cn";
@@ -110,14 +109,7 @@ const AboutPage = () => {
           position: "relative",
           zIndex: 1,
         }}
-      >
-        <Breadcrumbs
-          items={[
-            { label: t("breadcrumbs.home"), to: "/" },
-            { label: t("about.title") },
-          ]}
-        />
-      </div>
+      ></div>
       <section className={s.hero}>
         <div className={s.heroContent}>
           <h1 className={s.heroSlogan}>{t("about.heroTitle")}</h1>

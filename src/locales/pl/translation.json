@@ -57,9 +57,10 @@
   },
   "rating": {
     "aria_label": "Ocena {{value}} na {{max}}",
-    "count": "{{count}} ocena",
-    "count_plural": "{{count}} oceny",
-    "count_plural_2": "{{count}} ocen"
+    "count_one": "ocena",
+    "count_few": "oceny",
+    "count_many": "ocen",
+    "count_other": "ocen"
   },
   "common": {
     "buy": "Kup",
@@ -152,9 +153,10 @@
     "emptyHint": "Dodaj produkty z katalogu, aby złożyć zamówienie.",
     "store": "Sklep",
     "clear": "Wyczyść koszyk",
-    "itemsCount": "{{count}} produkt",
-    "itemsCount_plural": "{{count}} produkty",
-    "itemsCount_plural_2": "{{count}} produktów",
+    "itemsCount_one": "produkt",
+    "itemsCount_few": "produkty",
+    "itemsCount_many": "produktów",
+    "itemsCount_other": "produktów",
     "discount": "Rabat",
     "total": "Razem",
     "checkout": "Zamówienie",
@@ -225,7 +227,11 @@
     "consentText": "Zgadzam się z",
     "marketplaceRules": "regulaminem platformy handlowej",
     "and": "i",
-    "returnsPolicy": "polityką zwrotów"
+    "returnsPolicy": "polityką zwrotów",
+    "cardNumber": "Numer karty",
+    "cardExpiry": "Termin ważności (MM/RR)",
+    "cardCvv": "CVV",
+    "cardHolder": "Imię i nazwisko posiadacza"
   },
   "compare": {
     "title": "Porównanie",
@@ -442,9 +448,10 @@
   "catalog": {
     "title": "Katalog",
     "found": "Znaleziono:",
-    "items": "{{count}} produkt",
-    "items_plural": "{{count}} produkty",
-    "items_plural_2": "{{count}} produktów",
+    "items_one": "produkt",
+    "items_few": "produkty",
+    "items_many": "produktów",
+    "items_other": "produktów",
     "searchPlaceholder": "Szukaj w katalogu",
     "upTo": "Do {{price}}",
     "over": "Powyżej {{price}}",
@@ -556,5 +563,62 @@
     "errorLabel": "Błąd:",
     "stackLabel": "Stos komponentów:",
     "copied": "Błąd skopiowany. Wyślij go do wsparcia."
+  },
+  "specValues": {
+    "colors": {
+      "gray": "Szary",
+      "black": "Czarny",
+      "white": "Biały",
+      "darkBlue": "Ciemnoniebieski",
+      "silver": "Srebrny",
+      "graphite": "Grafitowy"
+    },
+    "units": {
+      "mm": "mm",
+      "cm": "cm",
+      "g": "g",
+      "kg": "kg",
+      "mAh": "mAh",
+      "min": "min",
+      "kmh": "km/h",
+      "ms": "m/s",
+      "m": "m",
+      "months": "mies."
+    },
+    "sensors": {
+      "cmos_1_1_3": "1/1.3\" CMOS",
+      "cmos_1": "1\" CMOS Sony",
+      "cmos_4_3": "4/3 CMOS Hasselblad",
+      "cmos_1_1_7": "1/1.7\" CMOS",
+      "cmos_1_2_3": "1/2.3\" CMOS",
+      "cmos_2_3": "2/3\" CMOS"
+    },
+    "fpvProtocols": {
+      "dji_o3": "DJI O3",
+      "dji_o4": "DJI O4",
+      "elrs_24": "ELRS 2.4 GHz",
+      "elrs_900": "ELRS 900 MHz",
+      "walksnail_avatar": "Walksnail Avatar",
+      "caddx_vista": "Caddx Vista"
+    },
+    "remotes": {
+      "included": "w zestawie",
+      "rc_2_screen": "RC 2 z ekranem",
+      "rc_n3": "RC-N3",
+      "lite_radio_3": "LiteRadio 3",
+      "tx16s": "RadioMaster TX16S",
+      "pocket": "RadioMaster Pocket"
+    },
+    "materials": {
+      "plastic": "Plastik",
+      "carbon": "Karbon",
+      "aluminum": "Aluminium",
+      "polycarbonate": "Poliwęglan",
+      "composite": "Kompozyt"
+    },
+    "booleans": {
+      "true": "Tak",
+      "false": "Nie"
+    }
   }
 }

@@ -93,6 +93,27 @@
     font-size: 8px;
   }
 }
+
+@media (max-width: 768px) {
+  .dot {
+  width: 7px;
+  height: 7px;
+  }
+  .stock {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .dot {
+  width: 8px;
+  height: 8px;
+  }
+  .stock {
+    font-size: 9px;
+  }
+}
+
 .cartBtn {
   padding: 8px;
   border-radius: var(--radius);

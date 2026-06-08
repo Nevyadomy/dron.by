@@ -46,30 +46,90 @@
   overflow: hidden;
 }
 @media (max-width: 768px) {
-  .scroll {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  
   .table {
-    min-width: 800px;           /* ← фикс: ширина для 5 товаров */
-    width: 100%;
+    min-width: 800px;  /* Фиксированная ширина для 5 товаров */
+    width: max-content;
   }
   
   .headerRow, .row {
-    grid-template-columns: 180px repeat(5, 140px);  /* ← фикс: компактные колонки */
+    grid-template-columns: 160px repeat(5, 140px);  /* Фиксированные колонки */
   }
   
-  /* Картинки на мобильных поменьше */
   .productImg {
-    width: 80px;
-    height: 80px;
+    height: 220px;
+  }
+  
+  .productName {
+    font-size: 12px;
+    min-height: auto;
+  }
+  
+  .productPrice {
+    font-size: 14px;
+  }
+  
+  .cell {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  
+  .labelCol {
+    font-size: 12px;
+  }
+  
+  .removeColBtn {
+    width: 24px;
+    height: 24px;
+    top: 4px;
+    right: 4px;
   }
 }
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .table {
+    min-width: 800px;
+    width: max-content;
+  }
+  
+  .headerRow, .row {
+    grid-template-columns: 160px repeat(5, 140px);
+  }
+  
+  .productImg {
+    height: 220px;
+  }
+  
+  .productName {
+    font-size: 12px;
+    min-height: auto;
+  }
+  
+  .productPrice {
+    font-size: 14px;
+  }
+  
+  .cell {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  
+  .labelCol {
+    font-size: 12px;
+  }
+  
+  .removeColBtn {
+    width: 24px;
+    height: 24px;
+    top: 4px;
+    right: 4px;
+  }
+}
+
 .headerRow, .row {
   display: grid;
   border-bottom: 1px solid var(--color-border);
 }
+
 .row:last-child { border-bottom: none; }
 .cell {
   padding: 12px 14px;

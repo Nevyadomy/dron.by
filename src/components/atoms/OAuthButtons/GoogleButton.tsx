@@ -279,7 +279,11 @@ export const GoogleButton = ({ label, onError }: GoogleButtonProps) => {
         <div style={{ marginTop: 12, width: "100%" }}>
           <div
             ref={buttonContainerRef}
-            style={{ display: "flex", justifyContent: "center", width: "100%" }}
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              width: "100%",
+            }}
           />
           <p
             style={{

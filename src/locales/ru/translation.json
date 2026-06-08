@@ -57,9 +57,10 @@
   },
   "rating": {
     "aria_label": "Рейтинг {{value}} из {{max}}",
-    "count": "{{count}} оценка",
-    "count_plural": "{{count}} оценки",
-    "count_plural_2": "{{count}} оценок"
+    "count_one": "оценка",
+    "count_few": "оценки",
+    "count_many": "оценок",
+    "count_other": "оценок"
   },
   "common": {
     "buy": "Купить",
@@ -152,9 +153,10 @@
     "emptyHint": "Добавьте товары из каталога, чтобы оформить заказ.",
     "store": "Магазин",
     "clear": "Очистить корзину",
-    "itemsCount": "{{count}} товар",
-    "itemsCount_plural": "{{count}} товара",
-    "itemsCount_plural_2": "{{count}} товаров",
+    "itemsCount_one": "товар",
+    "itemsCount_few": "товара",
+    "itemsCount_many": "товаров",
+    "itemsCount_other": "товаров",
     "discount": "Сумма скидки",
     "total": "Итого",
     "checkout": "Оформить заказ",
@@ -173,7 +175,11 @@
     "submitError": "Не удалось отправить заказ. Попробуйте позже.",
     "submitErrorDefault": "Ошибка при оформлении заказа.",
     "processing": "Оформляем…",
-    "buyNow": "Купить этот товар"
+    "buyNow": "Купить этот товар",
+    "cardNumber": "Номер карты",
+    "cardExpiry": "Срок (MM/YY)",
+    "cardCvv": "CVV",
+    "cardHolder": "Имя держателя"
   },
   "checkout": {
     "title": "Оформление заказа",
@@ -225,7 +231,11 @@
     "consentText": "Соглашаюсь с",
     "marketplaceRules": "правилами пользования торговой площадкой",
     "and": "и",
-    "returnsPolicy": "возврата"
+    "returnsPolicy": "возврата",
+    "cardNumber": "Номер карты",
+    "cardExpiry": "Срок (MM/YY)",
+    "cardCvv": "CVV",
+    "cardHolder": "Имя держателя"
   },
   "compare": {
     "title": "Сравнение",
@@ -443,9 +453,11 @@
   "catalog": {
     "title": "Каталог",
     "found": "Найдено:",
-    "items": "{{count}} товар",
-    "items_plural": "{{count}} товара",
-    "items_plural_2": "{{count}} товаров",
+    "items": "товар",
+    "items_one": "товар",
+    "items_few": "товара",
+    "items_many": "товаров",
+    "items_other": "товаров",
     "searchPlaceholder": "Поиск в каталоге",
     "upTo": "До {{price}}",
     "over": "Свыше {{price}}",
@@ -557,5 +569,62 @@
     "errorLabel": "Ошибка:",
     "stackLabel": "Стек компонентов:",
     "copied": "Ошибка скопирована. Отправьте её в поддержку."
+  },
+  "specValues": {
+    "colors": {
+      "gray": "Серый",
+      "black": "Чёрный",
+      "white": "Белый",
+      "darkBlue": "Тёмно-синий",
+      "silver": "Серебристый",
+      "graphite": "Графитовый"
+    },
+    "units": {
+      "mm": "мм",
+      "cm": "см",
+      "g": "г",
+      "kg": "кг",
+      "mAh": "мАч",
+      "min": "мин",
+      "kmh": "км/ч",
+      "ms": "м/с",
+      "m": "м",
+      "months": "мес."
+    },
+    "sensors": {
+      "cmos_1_1_3": "1/1.3\" CMOS",
+      "cmos_1": "1\" CMOS Sony",
+      "cmos_4_3": "4/3 CMOS Hasselblad",
+      "cmos_1_1_7": "1/1.7\" CMOS",
+      "cmos_1_2_3": "1/2.3\" CMOS",
+      "cmos_2_3": "2/3\" CMOS"
+    },
+    "fpvProtocols": {
+      "dji_o3": "DJI O3",
+      "dji_o4": "DJI O4",
+      "elrs_24": "ELRS 2.4 ГГц",
+      "elrs_900": "ELRS 900 МГц",
+      "walksnail_avatar": "Walksnail Avatar",
+      "caddx_vista": "Caddx Vista"
+    },
+    "remotes": {
+      "included": "в комплекте",
+      "rc_2_screen": "RC 2 с экраном",
+      "rc_n3": "RC-N3",
+      "lite_radio_3": "LiteRadio 3",
+      "tx16s": "RadioMaster TX16S",
+      "pocket": "RadioMaster Pocket"
+    },
+    "materials": {
+      "plastic": "Пластик",
+      "carbon": "Карбон",
+      "aluminum": "Алюминий",
+      "polycarbonate": "Поликарбонат",
+      "composite": "Композит"
+    },
+    "booleans": {
+      "true": "Да",
+      "false": "Нет"
+    }
   }
 }

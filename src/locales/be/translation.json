@@ -57,9 +57,10 @@
   },
   "rating": {
     "aria_label": "Рэйтынг {{value}} з {{max}}",
-    "count": "{{count}} ацэнка",
-    "count_plural": "{{count}} ацэнкі",
-    "count_plural_2": "{{count}} ацэнак"
+    "count_one": "адзнака",
+    "count_few": "адзнакі",
+    "count_many": "адзнак",
+    "count_other": "адзнак"
   },
   "common": {
     "buy": "Купіць",
@@ -152,9 +153,10 @@
     "emptyHint": "Дадайце тавары з каталога, каб аформіць заказ.",
     "store": "Магазін",
     "clear": "Ачысціць кошык",
-    "itemsCount": "{{count}} тавар",
-    "itemsCount_plural": "{{count}} тавары",
-    "itemsCount_plural_2": "{{count}} тавараў",
+    "itemsCount_one": "тавар",
+    "itemsCount_few": "тавары",
+    "itemsCount_many": "тавараў",
+    "itemsCount_other": "тавараў",
     "discount": "Сума зніжкі",
     "total": "Разам",
     "checkout": "Аформіць заказ",
@@ -225,7 +227,11 @@
     "consentText": "Згаджаюся з",
     "marketplaceRules": "правіламі карыстання гандлёвай пляцоўкай",
     "and": "і",
-    "returnsPolicy": "вяртання"
+    "returnsPolicy": "вяртання",
+    "cardNumber": "Нумар карты",
+    "cardExpiry": "Тэрмін (MM/YY)",
+    "cardCvv": "CVV",
+    "cardHolder": "Імя трымальніка"
   },
   "compare": {
     "title": "Параўнанне",
@@ -442,9 +448,10 @@
   "catalog": {
     "title": "Каталог",
     "found": "Знойдзена:",
-    "items": "{{count}} тавар",
-    "items_plural": "{{count}} тавары",
-    "items_plural_2": "{{count}} тавараў",
+    "items_one": "тавар",
+    "items_few": "тавары",
+    "items_many": "тавараў",
+    "items_other": "тавараў",
     "searchPlaceholder": "Пошук у каталогу",
     "upTo": "Да {{price}}",
     "over": "Звыш {{price}}",
@@ -556,5 +563,62 @@
     "errorLabel": "Памылка:",
     "stackLabel": "Стек кампанентаў:",
     "copied": "Памылка скапіравана. Адпраўце яе ў падтрымку."
+  },
+  "specValues": {
+    "colors": {
+      "gray": "Шэры",
+      "black": "Чорны",
+      "white": "Белы",
+      "darkBlue": "Цёмна-сіні",
+      "silver": "Серабрысты",
+      "graphite": "Графітавы"
+    },
+    "units": {
+      "mm": "мм",
+      "cm": "см",
+      "g": "г",
+      "kg": "кг",
+      "mAh": "мА·г",
+      "min": "хв",
+      "kmh": "км/г",
+      "ms": "м/с",
+      "m": "м",
+      "months": "мес."
+    },
+    "sensors": {
+      "cmos_1_1_3": "1/1.3\" CMOS",
+      "cmos_1": "1\" CMOS Sony",
+      "cmos_4_3": "4/3 CMOS Hasselblad",
+      "cmos_1_1_7": "1/1.7\" CMOS",
+      "cmos_1_2_3": "1/2.3\" CMOS",
+      "cmos_2_3": "2/3\" CMOS"
+    },
+    "fpvProtocols": {
+      "dji_o3": "DJI O3",
+      "dji_o4": "DJI O4",
+      "elrs_24": "ELRS 2.4 ГГц",
+      "elrs_900": "ELRS 900 МГц",
+      "walksnail_avatar": "Walksnail Avatar",
+      "caddx_vista": "Caddx Vista"
+    },
+    "remotes": {
+      "included": "у камплекце",
+      "rc_2_screen": "RC 2 з экранам",
+      "rc_n3": "RC-N3",
+      "lite_radio_3": "LiteRadio 3",
+      "tx16s": "RadioMaster TX16S",
+      "pocket": "RadioMaster Pocket"
+    },
+    "materials": {
+      "plastic": "Пластык",
+      "carbon": "Карбон",
+      "aluminum": "Алюміній",
+      "polycarbonate": "Полікарбанат",
+      "composite": "Кампазіт"
+    },
+    "booleans": {
+      "true": "Так",
+      "false": "Не"
+    }
   }
 }
