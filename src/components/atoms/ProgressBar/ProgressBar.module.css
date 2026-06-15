@@ -1,0 +1,78 @@
+/* Контейнер прогресс-бара (фиксированная полоса сверху) */
+.progressBarWrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: transparent;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+/* Заполняющаяся полоса */
+.progressBar {
+  height: 100%;
+  background: var(--color-primary);
+  transition: width 0.1s ease-out;
+  border-radius: 0 2px 2px 0;
+}
+
+/* Кнопка "Наверх" */
+.scrollTopBtn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: var(--color-primary-fg);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s, background 0.2s;
+  z-index: 100;
+  opacity: 0.9;
+}
+
+.scrollTopBtn:hover {
+  transform: translateY(-3px);
+  opacity: 1;
+}
+
+.scrollTopBtn:active {
+  transform: translateY(0);
+}
+
+/* Адаптив для телефонов */
+@media (max-width: 768px) {
+  .scrollTopBtn {
+    bottom: 16px;
+    right: 16px;
+    width: 44px;
+    height: 44px;
+  }
+  
+  .scrollTopBtn svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 0.9;
+    transform: translateY(0);
+  }
+}
+
+.scrollTopBtn {
+  animation: fadeInUp 0.3s ease;
+}

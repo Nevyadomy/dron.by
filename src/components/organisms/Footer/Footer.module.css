@@ -26,6 +26,9 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+.heading + svg {
+  align-self: flex-start;
+}
 .text {
   font-size: 12px;
   line-height: 1.6;
@@ -91,4 +94,46 @@
   opacity: 0.6;
   flex-wrap: wrap;
   gap: 12px;
+}
+.section {
+  width: 100%;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: default;
+}
+
+.sectionContent {
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.sectionContent.collapsed {
+  max-height: 0;
+}
+
+/* На мобильных header становится кликабельным */
+@media (max-width: 768px) {
+  .sectionHeader {
+    cursor: pointer;
+    padding: 4px 0;
+  }
+  
+  .sectionContent {
+    max-height: 500px;
+  }
+  
+  .sectionContent.collapsed {
+    max-height: 0;
+  }
+}
+
+/* На десктопе всегда раскрыто */
+@media (min-width: 769px) {
+  .sectionContent {
+    max-height: none !important;
+  }
 }
